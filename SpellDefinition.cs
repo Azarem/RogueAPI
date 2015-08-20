@@ -6,31 +6,45 @@ namespace RogueAPI
 {
     public class SpellDefinition
     {
-        public static readonly Dictionary<byte, SpellDefinition> Lookup = new Dictionary<byte, SpellDefinition>();
+        internal static readonly Dictionary<byte, SpellDefinition> Lookup = new Dictionary<byte, SpellDefinition>();
+
+        public static readonly SpellDefinition None = new SpellDefinition(0, "", "", "");
 
         protected byte spellId;
         protected string name, description, icon;
 
         public byte SpellId { get { return spellId; } }
-        public virtual string Name { get { return name; } }
-        public virtual string Description { get { return description; } }
-        public virtual string Icon { get { return icon; } }
+        public virtual string Name { get { return name; } set { name = value; } }
+        public virtual string Description { get { return description; } set { description = value; } }
+        public virtual string Icon { get { return icon; } set { icon = value; } }
 
         public SpellDefinition() { }
 
-        public SpellDefinition(byte spellId, string name, string description, string icon)
+        public SpellDefinition(byte id, string name = "", string description = "", string icon = "")
         {
-            this.spellId = spellId;
+            this.spellId = id;
             this.name = name;
             this.description = description;
             this.icon = icon;
-
-            //Lookup[spellId] = this;
         }
 
-        public void Register(SpellDefinition def)
+        public static void Register(SpellDefinition def) { Lookup[def.SpellId] = def; }
+        public static SpellDefinition Register(byte id, string name = "", string description = "", string icon = "")
         {
-            Lookup[def.SpellId] = def;
+            var def = new SpellDefinition(id, name, description, icon);
+            Register(def);
+            return def;
         }
+
+
+        public static SpellDefinition GetById(byte id)
+        {
+            SpellDefinition def;
+            if (!Lookup.TryGetValue(id, out def))
+                def = None;
+            return def;
+        }
+
+        public static IEnumerable<SpellDefinition> All { get { return Lookup.Values; } }
     }
 }
