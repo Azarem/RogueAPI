@@ -50,6 +50,7 @@ namespace RogueAPI.Plugins
                 try
                 {
                     parameters.OutputAssembly = Path.Combine(root.FullName, f.Name + ".dll");
+                    
                     var results = provider.CompileAssemblyFromFile(parameters, f.EnumerateFiles("*.cs", SearchOption.AllDirectories).Select(x => x.FullName).ToArray());
                     Console.WriteLine("PLUGINS: Compilation from {0}: {1} errors {2}", parameters.OutputAssembly, results.Errors.Count, String.Join("\r\n", results.Errors.Cast<CompilerError>()));
 
