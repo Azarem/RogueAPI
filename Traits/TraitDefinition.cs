@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace RogueAPI
+namespace RogueAPI.Traits
 {
     public class TraitDefinition
     {

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using DS2DEngine;
+using RogueAPI.Projectiles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RogueAPI
+namespace RogueAPI.Spells
 {
     public class SpellDefinition
     {
@@ -11,7 +13,7 @@ namespace RogueAPI
         public static readonly SpellDefinition None = new SpellDefinition(0) { Name = "", Description = "", Icon = "" };
 
         protected byte spellId;
-        protected string name, description, icon;
+        protected string name, displayName, description, icon;
         protected int manaCost, rarity;
         protected float damageMultiplier;
         protected float miscValue1, miscValue2;
@@ -19,6 +21,7 @@ namespace RogueAPI
 
         public byte SpellId { get { return spellId; } }
         public virtual string Name { get { return name; } set { name = value; } }
+        public virtual string DisplayName { get { return displayName; } set { displayName = value; } }
         public virtual string Description { get { return description; } set { description = value; } }
         public virtual string Icon { get { return icon; } set { icon = value; } }
         public virtual int ManaCost { get { return manaCost; } set { manaCost = value; } }
@@ -38,6 +41,15 @@ namespace RogueAPI
         }
 
         public override string ToString() { return Name; }
+
+        public virtual ProjectileInstance GetProjectileInstance(GameObj source)
+        {
+            var inst = Projectile.CreateInstance(source);
+            //Make sure the damage shield has the correct target (is this necessary?)
+            if (SpellId == 11)
+                inst.Target = source;
+            return inst;
+        }
 
         public static void Register(SpellDefinition def) { Lookup[def.SpellId] = def; }
         public static SpellDefinition Register(byte id)
