@@ -8,9 +8,9 @@ namespace RogueAPI.Spells
 {
     public class SpellDefinition
     {
-        internal static readonly Dictionary<byte, SpellDefinition> Lookup = new Dictionary<byte, SpellDefinition>();
+        public static readonly SpellDefinition None = new SpellDefinition(0);
+        internal static readonly Dictionary<byte, SpellDefinition> Lookup = new Dictionary<byte, SpellDefinition>() { { 0, None } };
 
-        public static readonly SpellDefinition None = new SpellDefinition(0) { Name = "", Description = "", Icon = "" };
 
         protected byte spellId;
         protected string name, displayName, description, icon;
@@ -51,13 +51,8 @@ namespace RogueAPI.Spells
             return inst;
         }
 
-        public static void Register(SpellDefinition def) { Lookup[def.SpellId] = def; }
-        public static SpellDefinition Register(byte id)
-        {
-            var def = new SpellDefinition(id);
-            Register(def);
-            return def;
-        }
+        public static SpellDefinition Register(SpellDefinition def) { return Lookup[def.SpellId] = def; }
+        public static SpellDefinition Register(byte id) { return Register(new SpellDefinition(id)); }
 
 
         public static SpellDefinition GetById(byte id)

@@ -28,38 +28,54 @@ namespace RogueAPI.Plugins
             Console.WriteLine("PLUGINS: Found {0} dlls in plugin directory", dlls.Count);
 
             //Look for existing .dll files
-            foreach (var f in dlls)
+            var ix = 0;
+            var count = dlls.Count;
+            while (ix < count)
             {
+                var f = dlls[ix];
                 var srcDir = dirs.FirstOrDefault(x => x.Name == Path.GetFileNameWithoutExtension(f.Name));
-                if (srcDir != null && srcDir.LastWriteTime <= f.LastWriteTime)
-                    dirs.Remove(srcDir);
+                if (srcDir != null)
+                {
+                    if (srcDir.LastWriteTime <= f.LastWriteTime)
+                        dirs.Remove(srcDir);
+                    else
+                    {
+                        dlls.RemoveAt(ix);
+                        count--;
+                        continue;
+                    }
+                }
+                ix++;
             }
 
-            CSharpCodeProvider provider = new CSharpCodeProvider();
-            CompilerParameters parameters = new CompilerParameters(new string[] { typeof(PluginInitializer).Assembly.Location })
+            if (dirs.Count > 0)
             {
-                GenerateInMemory = false,
-                GenerateExecutable = false,
-                IncludeDebugInformation = false
-            };
-
-            Console.WriteLine("PLUGINS: Processing {0} source folders in plugin directory", dirs.Count);
-
-            foreach (var f in dirs)
-            {
-                try
+                CSharpCodeProvider provider = new CSharpCodeProvider();
+                CompilerParameters parameters = new CompilerParameters(new string[] { "System.dll", "System.Core.dll", typeof(Microsoft.Xna.Framework.Vector2).Assembly.Location, typeof(PluginInitializer).Assembly.Location })
                 {
-                    parameters.OutputAssembly = Path.Combine(root.FullName, f.Name + ".dll");
-                    
-                    var results = provider.CompileAssemblyFromFile(parameters, f.EnumerateFiles("*.cs", SearchOption.AllDirectories).Select(x => x.FullName).ToArray());
-                    Console.WriteLine("PLUGINS: Compilation from {0}: {1} errors {2}", parameters.OutputAssembly, results.Errors.Count, String.Join("\r\n", results.Errors.Cast<CompilerError>()));
+                    GenerateInMemory = false,
+                    GenerateExecutable = false,
+                    IncludeDebugInformation = false
+                };
 
-                    if (!results.Errors.HasErrors)
-                        _pluginAssemblies.Add(results.CompiledAssembly);
-                }
-                catch (Exception x)
+                Console.WriteLine("PLUGINS: Processing {0} source folders in plugin directory", dirs.Count);
+
+                foreach (var f in dirs)
                 {
-                    Console.WriteLine("PLUGINS: {0}", x);
+                    try
+                    {
+                        parameters.OutputAssembly = Path.Combine(root.FullName, f.Name + ".dll");
+
+                        var results = provider.CompileAssemblyFromFile(parameters, f.EnumerateFiles("*.cs", SearchOption.AllDirectories).Select(x => x.FullName).ToArray());
+                        Console.WriteLine("PLUGINS: Compilation from {0}: {1} errors {2}", parameters.OutputAssembly, results.Errors.Count, String.Join("\r\n", results.Errors.Cast<CompilerError>()));
+
+                        if (!results.Errors.HasErrors)
+                            _pluginAssemblies.Add(results.CompiledAssembly);
+                    }
+                    catch (Exception x)
+                    {
+                        Console.WriteLine("PLUGINS: {0}", x);
+                    }
                 }
             }
 

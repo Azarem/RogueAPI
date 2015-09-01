@@ -47,6 +47,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ClassDefinition.cs" />
+    <Compile Include="Combat\DamageModifier.cs" />
+    <Compile Include="Game\AncestorPortrait.cs" />
+    <Compile Include="Game\Entity.cs" />
+    <Compile Include="Game\Player.cs" />
+    <Compile Include="Game\Rune.cs" />
+    <Compile Include="Game\Stat.cs" />
+    <Compile Include="Player\PlayerStatus.cs" />
     <Compile Include="Plugins\PluginEntryPointAttribute.cs" />
     <Compile Include="Plugins\PluginInitializer.cs" />
     <Compile Include="Projectiles\ProjectileDefinition.cs" />
@@ -55,7 +63,9 @@
     <Compile Include="Spells\SpellDefinition.cs" />
     <Compile Include="Traits\TraitDefinition.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Abilities\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
