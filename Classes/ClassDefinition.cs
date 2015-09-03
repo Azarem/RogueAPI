@@ -40,7 +40,7 @@ namespace RogueAPI.Classes
         public ClassDefinition(byte id) { classId = id; }
 
 
-        public static void Register(ClassDefinition def) { Lookup[def.ClassId] = def; }
+        public static ClassDefinition Register(ClassDefinition def) { Lookup[def.ClassId] = def; return def; }
         public static ClassDefinition Register(byte id)
         {
             var def = new ClassDefinition(id);
