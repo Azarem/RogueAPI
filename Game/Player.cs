@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RogueAPI.Game
 {
-    public static class Player
+    public class Player : Entity
     {
         private static PlayerStatus status = new PlayerStatus();
         private static ClassDefinition _class;
