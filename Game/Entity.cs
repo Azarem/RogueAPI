@@ -1,15 +1,12 @@
-﻿using DS2DEngine;
+﻿using System;
+using System.Linq;
+using DS2DEngine;
 using RogueAPI.Modifiers;
 using RogueAPI.Stats;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueAPI.Game
 {
-    public class Entity : GameObj
+    public class Entity : PhysicsObjContainer
     {
         public int TotalMagicDamage { get { return 0; } }
         public float SpellCastDelay { get; set; }
@@ -22,9 +19,9 @@ namespace RogueAPI.Game
         
 
 
-        protected override GameObj CreateCloneInstance()
-        {
-            throw new NotImplementedException();
-        }
+        //protected override GameObj CreateCloneInstance()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

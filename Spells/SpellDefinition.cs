@@ -1,13 +1,15 @@
-﻿using DS2DEngine;
-using RogueAPI.Game;
-using RogueAPI.Projectiles;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DS2DEngine;
+using RogueAPI.Classes;
+using RogueAPI.Game;
+using RogueAPI.Projectiles;
+using RogueAPI.Traits;
 
 namespace RogueAPI.Spells
 {
-    public class SpellDefinition
+    public class SpellDefinition : ILinkContainer<SpellDefinition, TraitDefinition>, ILinkContainer<SpellDefinition, ClassDefinition>
     {
         public static readonly SpellDefinition None = new SpellDefinition(0);
         internal static readonly Dictionary<byte, SpellDefinition> Lookup = new Dictionary<byte, SpellDefinition>() { { 0, None } };
@@ -19,6 +21,9 @@ namespace RogueAPI.Spells
         protected float damageMultiplier;
         protected float miscValue1, miscValue2;
         protected ProjectileDefinition baseProjectile;
+        protected string[] soundList;
+        public readonly LinkedList<SpellDefinition, TraitDefinition> TraitConflicts;
+        public readonly LinkedList<SpellDefinition, ClassDefinition> AssignedClasses;
 
         public byte SpellId { get { return spellId; } }
         public virtual string Name { get { return name; } set { name = value; } }
@@ -28,6 +33,7 @@ namespace RogueAPI.Spells
         public virtual int ManaCost { get { return manaCost; } set { manaCost = value; } }
         public virtual int Rarity { get { return rarity; } set { rarity = value; } }
         public virtual float DamageMultiplier { get { return damageMultiplier; } set { damageMultiplier = value; } }
+        public virtual string[] SoundList { get { return soundList; } set { soundList = value; } }
 
         //This should be class dependent, and it will likely change
         public virtual float MiscValue1 { get { return miscValue1; } set { miscValue1 = value; } }
@@ -39,6 +45,8 @@ namespace RogueAPI.Spells
         public SpellDefinition(byte id)
         {
             this.spellId = id;
+            TraitConflicts = new LinkedList<SpellDefinition, TraitDefinition>(this);
+            AssignedClasses = new LinkedList<SpellDefinition, ClassDefinition>(this);
         }
 
         public override string ToString() { return Name; }
@@ -52,59 +60,15 @@ namespace RogueAPI.Spells
             return inst;
         }
 
-        public virtual void BeginCastSpell(Entity source)
-        {
+        //public virtual void BeginCastSpell(Entity source)
+        //{
 
-        }
+        //}
 
-        public virtual void CastSpell(Entity source, bool isMega)
-        {
-            //Color white = Color.White;
-            //ProjectileInstance projData = GetProjectileInstance(source);
-            ////float damageMultiplier = ;
-            //int damage = (int)(source.TotalMagicDamage * this.DamageMultiplier);
-            //int manaCost = (int)(this.ManaCost * source.SpellCostMultiplier);
-            //float scale = 1;
-            //if (isMega)
-            //{
-            //    manaCost *= 2;
-            //    scale *= 1.75f;
-            //    damage *= 2;
-            //}
+        //public virtual void CastSpell(Entity source, bool isMega)
+        //{
 
-            //if (source.CurrentMana >= manaCost)
-            //{
-            //    source.SpellCastDelay = 0.5f;
-            //    if (!(this.AttachedLevel.CurrentRoom is CarnivalShoot1BonusRoom) && !(this.AttachedLevel.CurrentRoom is CarnivalShoot2BonusRoom) && (Game.PlayerStats.Traits.X == 31f || Game.PlayerStats.Traits.Y == 31f) && Game.PlayerStats.Class != 16 && Game.PlayerStats.Class != 17)
-            //    {
-            //        byte[] spellList = ClassType.GetSpellList(Game.PlayerStats.Class);
-            //        do
-            //        {
-            //            Game.PlayerStats.Spell = spellList[CDGMath.RandomInt(0, (int)spellList.Length - 1)];
-            //        }
-            //        while (Game.PlayerStats.Spell == 6 || Game.PlayerStats.Spell == 4 || Game.PlayerStats.Spell == 11);
-            //        this.AttachedLevel.UpdatePlayerSpellIcon();
-            //    }
-            //}
-            //float xValue = SpellEV.GetXValue(spell);
-            //float yValue = SpellEV.GetYValue(spell);
-            //if (source.CurrentMana < manaCost)
-            //{
-            //    SoundManager.PlaySound("Error_Spell");
-            //}
-            //else if (spell != 6 && spell != 5 && !this.m_damageShieldCast && manaCost > 0)
-            //{
-            //    TextManager textManager = this.m_levelScreen.TextManager;
-            //    Color skyBlue = Color.SkyBlue;
-            //    float x = base.X;
-            //    Rectangle bounds = this.Bounds;
-            //    textManager.DisplayNumberStringText(-manaCost, "mp", skyBlue, new Vector2(x, (float)bounds.Top));
-            //}
-            //if (spell != 12 && spell != 11 && (Game.PlayerStats.Traits.X == 22f || Game.PlayerStats.Traits.Y == 22f))
-            //{
-            //    projData.SourceAnchor = new Vector2(projData.SourceAnchor.X * -1f, projData.SourceAnchor.Y);
-            //}
-        }
+        //}
 
         public static SpellDefinition Register(SpellDefinition def) { return Lookup[def.SpellId] = def; }
         public static SpellDefinition Register(byte id) { return Register(new SpellDefinition(id)); }
@@ -118,7 +82,16 @@ namespace RogueAPI.Spells
             return def;
         }
 
+        public static SpellDefinition GetRandomSpell(ClassDefinition cls, TraitDefinition[] traits)
+        {
+            var spellList = cls.AssignedSpells.Where(x => !traits.Any(y => y.SpellConflicts.Contains(x))).ToList();
+            return spellList[CDGMath.RandomInt(0, spellList.Count - 1)];
+        }
+
 
         public static IEnumerable<SpellDefinition> All { get { return Lookup.Values; } }
+
+        LinkedList<SpellDefinition, TraitDefinition> ILinkContainer<SpellDefinition, TraitDefinition>.LinkedList { get { return TraitConflicts; } }
+        LinkedList<SpellDefinition, ClassDefinition> ILinkContainer<SpellDefinition, ClassDefinition>.LinkedList { get { return AssignedClasses; } }
     }
 }

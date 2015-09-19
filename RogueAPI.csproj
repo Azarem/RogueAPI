@@ -45,24 +45,52 @@
     </Reference>
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Game\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Game.dll</HintPath>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Game\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Game.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Graphics\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Graphics.dll</HintPath>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Graphics\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Graphics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Xact\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
     <Reference Include="SpriteSystem">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Rogue Legacy\SpriteSystem.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\SteamApps\common\Rogue Legacy\SpriteSystem.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="Tweener">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Rogue Legacy\Tweener.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Assassin.cs" />
+    <Compile Include="Classes\Assassin2.cs" />
+    <Compile Include="Classes\Banker.cs" />
+    <Compile Include="Classes\Banker2.cs" />
+    <Compile Include="Classes\Barbarian.cs" />
+    <Compile Include="Classes\Barbarian2.cs" />
     <Compile Include="Classes\ClassDefinition.cs" />
+    <Compile Include="Classes\Dragon.cs" />
+    <Compile Include="Classes\Knight.cs" />
+    <Compile Include="Classes\Knight2.cs" />
+    <Compile Include="Classes\Lich.cs" />
+    <Compile Include="Classes\Lich2.cs" />
+    <Compile Include="Classes\Ninja.cs" />
+    <Compile Include="Classes\Ninja2.cs" />
+    <Compile Include="Classes\SpellSword.cs" />
+    <Compile Include="Classes\SpellSword2.cs" />
+    <Compile Include="Classes\Traitor.cs" />
+    <Compile Include="Classes\Wizard.cs" />
+    <Compile Include="Classes\Wizard2.cs" />
     <Compile Include="Combat\DamageModifier.cs" />
     <Compile Include="Content\SpriteUtil.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Enemies\Chicken.cs" />
+    <Compile Include="Enemies\EnemyBase.cs" />
+    <Compile Include="Enemies\EnemyDifficulty.cs" />
     <Compile Include="Equipment\EquipmentList.cs" />
     <Compile Include="Equipment\HelmetDefinition.cs" />
     <Compile Include="Equipment\Weapons\SquireSword.cs" />
@@ -71,8 +99,10 @@
     <Compile Include="Game\AttachmentType.cs" />
     <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\Player.cs" />
+    <Compile Include="Game\RandomItemDrop.cs" />
     <Compile Include="Game\Rune.cs" />
     <Compile Include="Game\Stat.cs" />
+    <Compile Include="LinkedList.cs" />
     <Compile Include="Modifiers\Attachment.cs" />
     <Compile Include="Modifiers\AttachmentCollection.cs" />
     <Compile Include="Modifiers\AttachmentCollectionBase.cs" />
@@ -88,6 +118,8 @@
     <Compile Include="Projectiles\ProjectileDefinition.cs" />
     <Compile Include="Projectiles\ProjectileInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rooms\RoomBase.cs" />
+    <Compile Include="Screens\ScreenBase.cs" />
     <Compile Include="Spells\SpellBase.cs" />
     <Compile Include="Spells\SpellDefinition.cs" />
     <Compile Include="Stats\HealthStat.cs" />
@@ -95,7 +127,43 @@
     <Compile Include="Stats\StatBase.cs" />
     <Compile Include="Stats\StatCollection.cs" />
     <Compile Include="Stats\StatDefinition.cs" />
+    <Compile Include="Traits\Adopted.cs" />
+    <Compile Include="Traits\Alektorophobia.cs" />
+    <Compile Include="Traits\Alzheimers.cs" />
+    <Compile Include="Traits\Ambilevous.cs" />
+    <Compile Include="Traits\Baldness.cs" />
+    <Compile Include="Traits\CIP.cs" />
+    <Compile Include="Traits\ColorBlind.cs" />
+    <Compile Include="Traits\Dementia.cs" />
+    <Compile Include="Traits\Dextrocardia.cs" />
+    <Compile Include="Traits\Dwarfism.cs" />
+    <Compile Include="Traits\Dyslexia.cs" />
+    <Compile Include="Traits\Ectomorph.cs" />
+    <Compile Include="Traits\EideticMemory.cs" />
+    <Compile Include="Traits\Endomorph.cs" />
+    <Compile Include="Traits\FarSighted.cs" />
+    <Compile Include="Traits\Gay.cs" />
+    <Compile Include="Traits\Gigantism.cs" />
+    <Compile Include="Traits\Glaucoma.cs" />
+    <Compile Include="Traits\Hyperactive.cs" />
+    <Compile Include="Traits\Hypergonadism.cs" />
+    <Compile Include="Traits\Hypermobility.cs" />
+    <Compile Include="Traits\Hypochondriac.cs" />
+    <Compile Include="Traits\Hypogonadism.cs" />
+    <Compile Include="Traits\IBS.cs" />
+    <Compile Include="Traits\NearSighted.cs" />
+    <Compile Include="Traits\NoFurniture.cs" />
+    <Compile Include="Traits\Nostalgic.cs" />
+    <Compile Include="Traits\OCD.cs" />
+    <Compile Include="Traits\PAD.cs" />
+    <Compile Include="Traits\PlatformsOpen.cs" />
+    <Compile Include="Traits\Savant.cs" />
+    <Compile Include="Traits\StereoBlind.cs" />
+    <Compile Include="Traits\TheOne.cs" />
+    <Compile Include="Traits\Tourettes.cs" />
     <Compile Include="Traits\TraitDefinition.cs" />
+    <Compile Include="Traits\TunnelVision.cs" />
+    <Compile Include="Traits\Vertigo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abilities\" />
