@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using RogueAPI.Spells;
 using RogueAPI.Traits;
+using RogueAPI.Stats;
+using RogueAPI.Game;
 
 namespace RogueAPI.Classes
 {
@@ -73,15 +75,28 @@ namespace RogueAPI.Classes
             AssignedSpells = new LinkedList<ClassDefinition, SpellDefinition>(this);
         }
 
-        internal protected virtual void Activate()
+        internal protected virtual void Activate(Player player)
         {
-
+            player.GetStatObject(HealthStat.Id).AddHandler(CalculatingMaxHealth);
+            player.GetStatObject(ManaStat.Id).AddHandler(CalculatingMaxMana);
         }
 
-        internal protected virtual void Deactivate()
+        internal protected virtual void Deactivate(Player player)
         {
-
+            player.GetStatObject(ManaStat.Id).RemoveHandler(CalculatingMaxMana);
+            player.GetStatObject(HealthStat.Id).RemoveHandler(CalculatingMaxHealth);
         }
+
+        protected virtual void CalculatingMaxHealth(StatCalculation calc)
+        {
+            calc.Multiplier *= HealthMultiplier;
+        }
+
+        protected virtual void CalculatingMaxMana(StatCalculation calc)
+        {
+            calc.Multiplier *= ManaMultiplier;
+        }
+
 
 
         public static ClassDefinition Register(ClassDefinition def) { All[def.ClassId] = def; return def; }

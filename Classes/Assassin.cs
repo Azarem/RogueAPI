@@ -3,6 +3,7 @@ using System.Linq;
 using DS2DEngine;
 using Microsoft.Xna.Framework;
 using RogueAPI.Spells;
+using RogueAPI.Game;
 
 namespace RogueAPI.Classes
 {
@@ -38,20 +39,20 @@ namespace RogueAPI.Classes
 
         private float smokeTimer;
 
-        protected internal override void Activate()
+        protected internal override void Activate(Player player)
         {
-            base.Activate();
+            base.Activate(player);
             Game.Player.RetrievingSkinColor += Player_RetrievingSkinColor;
             Game.Player.PlayerEffectsUpdating += Player_PlayerEffectsUpdating;
             smokeTimer = 0.5f;
         }
 
 
-        protected internal override void Deactivate()
+        protected internal override void Deactivate(Player player)
         {
             Game.Player.PlayerEffectsUpdating -= Player_PlayerEffectsUpdating;
             Game.Player.RetrievingSkinColor -= Player_RetrievingSkinColor;
-            base.Deactivate();
+            base.Deactivate(player);
         }
 
         void Player_RetrievingSkinColor(PipeEventState<DS2DEngine.Screen, Game.Player.SkinShaderArgs> args)

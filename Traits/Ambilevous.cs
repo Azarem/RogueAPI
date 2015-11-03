@@ -2,6 +2,8 @@
 using System.Linq;
 using DS2DEngine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using RogueAPI.Game;
 
 namespace RogueAPI.Traits
 {
@@ -21,17 +23,19 @@ namespace RogueAPI.Traits
 
         private float questionTimer;
 
-        protected internal override void Activate()
+        protected internal override void Activate(Player player)
         {
-            base.Activate();
+            base.Activate(player);
             Game.Player.PlayerEffectsUpdating += Player_PlayerEffectsUpdating;
+            Event<ProjectileFireEvent>.Handler += ProjectileFired;
             questionTimer = 0.5f;
         }
 
-        protected internal override void Deactivate()
+        protected internal override void Deactivate(Player player)
         {
+            Event<ProjectileFireEvent>.Handler -= ProjectileFired;
             Game.Player.PlayerEffectsUpdating -= Player_PlayerEffectsUpdating;
-            base.Deactivate();
+            base.Deactivate(player);
         }
 
         void Player_PlayerEffectsUpdating(ObjContainer player, GameTime gameTime)
@@ -45,6 +49,19 @@ namespace RogueAPI.Traits
                     questionTimer = 0.4f;
                     Core.AttachEffect(EffectType.QuestionMark, player, new Vector2(player.X, player.Bounds.Top));
                 }
+            }
+        }
+
+        private void ProjectileFired(ProjectileFireEvent args)
+        {
+            if (args.Sender == Game.Player.Instance.GameObject)
+            {
+                var proj = args.Projectile;
+                proj.AccelerationX *= -1f;
+                if (!args.ProjectileDefinition.LockPosition)
+                    proj.Flip = args.Sender.Flip != SpriteEffects.FlipHorizontally
+                        ? SpriteEffects.FlipHorizontally
+                        : SpriteEffects.None;
             }
         }
 

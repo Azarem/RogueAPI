@@ -86,6 +86,11 @@ namespace RogueAPI.Projectiles
             };
         }
 
+        public ProjectileObj Fire(GameObj source, GameObj target = null)
+        {
+            return Core.FireProjectile(this, source, target);
+        }
+
 
         public virtual void Dispose()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DS2DEngine;
+using System;
 using System.Linq;
 
 namespace RogueAPI.Enemies
@@ -7,7 +8,8 @@ namespace RogueAPI.Enemies
     {
         public readonly byte EnemyId;
 
-        protected EnemyBase(byte id)
+        protected EnemyBase(byte id, PhysicsObjContainer gameObject)
+            : base(gameObject)
         {
             EnemyId = id;
         }

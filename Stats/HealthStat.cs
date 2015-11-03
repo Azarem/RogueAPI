@@ -8,6 +8,11 @@ namespace RogueAPI.Stats
 {
     public class HealthStat : StatDefinition
     {
-        public const int Id = 0;
+        public const byte Id = 0;
+
+        public HealthStat()
+        {
+            BaseValue = 100f;
+        }
     }
 }

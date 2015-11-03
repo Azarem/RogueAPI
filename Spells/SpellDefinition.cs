@@ -6,6 +6,7 @@ using RogueAPI.Classes;
 using RogueAPI.Game;
 using RogueAPI.Projectiles;
 using RogueAPI.Traits;
+using RogueAPI.Stats;
 
 namespace RogueAPI.Spells
 {
@@ -60,15 +61,25 @@ namespace RogueAPI.Spells
             return inst;
         }
 
-        //public virtual void BeginCastSpell(Entity source)
-        //{
+        internal protected virtual void BeginCastSpell(Entity source)
+        {
+            var mana = source.GetStatObject(ManaStat.Id);
+            var manaCost = source.GetStatObject(ManaCostStat.Id);
 
-        //}
+            var totalCost = ManaCost * manaCost.MaxValue;
 
-        //public virtual void CastSpell(Entity source, bool isMega)
-        //{
+            if(mana.CurrentValue >= totalCost)
+            {
+                mana.CurrentValue -= totalCost;
+                CastSpell(source, null, false);
+            }
+        }
 
-        //}
+        protected virtual void CastSpell(Entity source, ProjectileObj projectile, bool isMega)
+        {
+
+        }
+
 
         public static SpellDefinition Register(SpellDefinition def) { return Lookup[def.SpellId] = def; }
         public static SpellDefinition Register(byte id) { return Register(new SpellDefinition(id)); }

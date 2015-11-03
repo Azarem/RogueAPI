@@ -13,8 +13,8 @@ namespace RogueAPI.Classes
         {
             this.DisplayName = "Spelunker";
             this.FemaleDisplayName = "Spelunkette";
-            this.Description = "A hero for hoarders. Very weak, but has a huge bonus to gold.\nSPECIAL: Ordinary Headlamp.";
-            this.ProfileCardDescription = "SPECIAL: Ordinary Headlamp.\n+30% Gold gain.\nVery weak in all other stats.";
+            this.Description += "\nSPECIAL: Ordinary Headlamp.";
+            this.ProfileCardDescription = "SPECIAL: Ordinary Headlamp.\n" + this.ProfileCardDescription;
         }
 
         protected Banker2(byte id)

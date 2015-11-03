@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DS2DEngine;
+using RogueAPI.Game;
+using System;
 using System.Linq;
 
 namespace RogueAPI.Traits
@@ -17,6 +19,23 @@ namespace RogueAPI.Traits
             this.Rarity = 1;
 
             this.TraitConflicts.Add(Gigantism.Instance);
+        }
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Event<LevelEnterEventArgs>.Handler += LevelScreenEntered;
+        }
+
+        protected internal override void Deactivate(Player player)
+        {
+            Event<LevelEnterEventArgs>.Handler -= LevelScreenEntered;
+            base.Deactivate(player);
+        }
+
+        private void LevelScreenEntered(LevelEnterEventArgs args)
+        {
+            args.Player.Scale *= 0.675f;
         }
 
         //ProceduralLevelScreen.OnEnter - Set player scale to 1.35

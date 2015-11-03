@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using RogueAPI.Spells;
+using RogueAPI.Game;
 
 namespace RogueAPI.Classes
 {
@@ -34,16 +35,16 @@ namespace RogueAPI.Classes
             this.AssignedSpells.Add(SpellDefinition.GetById(12));
         }
 
-        protected internal override void Activate()
+        protected internal override void Activate(Player player)
         {
-            base.Activate();
+            base.Activate(player);
             Game.Player.RetrievingSkinColor += Player_RetrievingSkinColor;
         }
 
-        protected internal override void Deactivate()
+        protected internal override void Deactivate(Player player)
         {
             Game.Player.RetrievingSkinColor -= Player_RetrievingSkinColor;
-            base.Deactivate();
+            base.Deactivate(player);
         }
 
 

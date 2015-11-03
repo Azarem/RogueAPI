@@ -3,6 +3,7 @@ using System.Linq;
 using DS2DEngine;
 using Microsoft.Xna.Framework;
 using RogueAPI.Spells;
+using RogueAPI.Game;
 
 namespace RogueAPI.Classes
 {
@@ -37,17 +38,17 @@ namespace RogueAPI.Classes
 
         private float sparkleCounter;
 
-        protected internal override void Activate()
+        protected internal override void Activate(Player player)
         {
-            base.Activate();
+            base.Activate(player);
             Game.Player.PlayerEffectsUpdating += Player_PlayerEffectsUpdating;
             sparkleCounter = 0.2f;
         }
 
-        protected internal override void Deactivate()
+        protected internal override void Deactivate(Player player)
         {
             Game.Player.PlayerEffectsUpdating -= Player_PlayerEffectsUpdating;
-            base.Deactivate();
+            base.Deactivate(player);
         }
 
         void Player_PlayerEffectsUpdating(ObjContainer player, GameTime gameTime)

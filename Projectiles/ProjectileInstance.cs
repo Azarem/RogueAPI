@@ -7,6 +7,15 @@ namespace RogueAPI.Projectiles
     public class ProjectileInstance : ProjectileDefinition
     {
         public GameObj Source;
+        //public float AltX;
+        //public float AltY;
+        //public ProjectileIconObj AttachedIcon;
+        //public float BlinkTime;
+        //public bool GamePaused;
+        //public bool IgnoreBoundsCheck;
+        //public bool IsAlive;
+        //public bool IsDemented;
+        //public bool IsDying;
 
         public ProjectileInstance(GameObj source)
         {

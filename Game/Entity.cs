@@ -3,25 +3,44 @@ using System.Linq;
 using DS2DEngine;
 using RogueAPI.Modifiers;
 using RogueAPI.Stats;
+using System.Collections.Generic;
 
 namespace RogueAPI.Game
 {
-    public class Entity : PhysicsObjContainer
+    public class Entity
     {
-        public int TotalMagicDamage { get { return 0; } }
-        public float SpellCastDelay { get; set; }
-        public int CurrentMana { get; set; }
-        public float SpellCostMultiplier { get; set; }
+        private PhysicsObjContainer _gameObject;
+        public PhysicsObjContainer GameObject { get { return _gameObject; } }
 
-        public IAttachmentCollection[] attachments;
+        public Entity(PhysicsObjContainer gameObject)
+        {
+            _gameObject = gameObject;
+        }
 
-        public readonly StatCollection Stats = new StatCollection();
+        protected StatDefinition[] _statArray = new StatDefinition[16];
         
+        public StatDefinition GetStatObject(byte statId)
+        {
+            StatDefinition def = null;
 
+            var len = _statArray.Length;
+            if (statId >= len)
+            {
+                while (statId >= len)
+                    len <<= 1;
 
-        //protected override GameObj CreateCloneInstance()
-        //{
-        //    throw new NotImplementedException();
-        //}
+                var newArr = new StatDefinition[len];
+                _statArray.CopyTo(newArr, 0);
+                _statArray = newArr;
+            }
+            else
+                def = _statArray[statId];
+
+            if (def == null)
+                _statArray[statId] = (StatDefinition)Activator.CreateInstance(StatDefinition.All[statId]);
+
+            return def;
+        }
+        
     }
 }

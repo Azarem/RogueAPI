@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DS2DEngine;
+using RogueAPI.Game;
+using System;
 using System.Linq;
 
 namespace RogueAPI.Traits
@@ -15,6 +17,24 @@ namespace RogueAPI.Traits
             this.Description = "The bald and the beautiful.";
             this.ProfileCardDescription = "You are bald.";
             this.Rarity = 1;
+        }
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Player.PlayerStyleUpdating += Player_PlayerStyleUpdating;
+        }
+
+
+        protected internal override void Deactivate(Player player)
+        {
+            Player.PlayerStyleUpdating -= Player_PlayerStyleUpdating;
+            base.Deactivate(player);
+        }
+
+        private void Player_PlayerStyleUpdating(ObjContainer player, string animationType)
+        {
+            player.GetChildAt(7).Visible = false;
         }
 
         //ProfileCardScreen.SetPlayerStyle - Hide hair part

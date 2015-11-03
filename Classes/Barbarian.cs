@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 using RogueAPI.Spells;
+using DS2DEngine;
+using RogueAPI.Game;
+using Microsoft.Xna.Framework;
 
 namespace RogueAPI.Classes
 {
@@ -30,5 +33,20 @@ namespace RogueAPI.Classes
             this.AssignedSpells.Add(SpellDefinition.GetById(9));
             this.AssignedSpells.Add(SpellDefinition.GetById(10));
         }
+
+        private ObjContainer player;
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Game.Player.Ability = Abilities.FahRoDus.Instance;
+        }
+
+        protected internal override void Deactivate(Player player)
+        {
+            Game.Player.Ability = null;
+            base.Deactivate(player);
+        }
+
     }
 }

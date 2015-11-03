@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DS2DEngine;
+﻿using DS2DEngine;
 using Microsoft.Xna.Framework;
+using RogueAPI.Abilities;
 using RogueAPI.Classes;
-using RogueAPI.Player;
 using RogueAPI.Traits;
+using System;
+using System.Collections.Generic;
 
 namespace RogueAPI.Game
 {
     public class Player : Entity
     {
-        private static PlayerStatus status = new PlayerStatus();
         private static ClassDefinition _class;
+        private static AbilityDefinition _ability;
         private static List<Rune> runes = new List<Rune>();
-        internal static PhysicsObjContainer instance;
+        internal static Player instance;
         private static TraitDefinition[] traits = new TraitDefinition[0];
 
         public static Color SkinColor1 = new Color(231, 175, 131, 255);
         public static Color SkinColor2 = new Color(199, 109, 112, 255);
 
-        public static PhysicsObjContainer Instance { get { return instance; } set { instance = value; } }
-        public static PlayerStatus Status { get { return status; } }
+        public static Player Instance { get { return instance; } set { instance = value; } }
         public static List<Rune> Runes { get { return runes; } }
         public static ClassDefinition Class
         {
@@ -29,12 +27,33 @@ namespace RogueAPI.Game
             set
             {
                 if (_class != null)
-                    _class.Deactivate();
+                    _class.Deactivate(Instance);
 
                 _class = value;
 
                 if (_class != null)
-                    _class.Activate();
+                    _class.Activate(Instance);
+            }
+        }
+
+        public Player(PhysicsObjContainer gameObject)
+            : base(gameObject)
+        {
+
+        }
+
+        public static AbilityDefinition Ability
+        {
+            get { return _ability; }
+            set
+            {
+                if (_ability != null)
+                    _ability.Deactivate(Instance);
+
+                _ability = value;
+
+                if (_ability != null)
+                    _ability.Activate(Instance);
             }
         }
 
@@ -44,11 +63,11 @@ namespace RogueAPI.Game
             get { return traits; }
             set
             {
-                foreach (var t in traits.Except(value))
-                    t.Deactivate();
+                foreach (var t in traits)
+                    t.Deactivate(Instance);
 
-                foreach (var t in value.Except(traits))
-                    t.Activate();
+                foreach (var t in value)
+                    t.Activate(Instance);
 
                 traits = value;
             }
@@ -69,11 +88,12 @@ namespace RogueAPI.Game
             Class = ClassDefinition.GetById(value);
         }
 
-        public static event Action<object> CalculatingStat;
 
         public static event Action<ObjContainer, GameTime> PlayerEffectsUpdating;
 
         public static event PipeEventHandler<Screen, SkinShaderArgs> RetrievingSkinColor;
+
+        public static event Action<ObjContainer, string> PlayerStyleUpdating;
 
         public static PipeEventState<Screen, SkinShaderArgs> PipeSkinShaderArgs(Screen source, ObjContainer playerSprite)
         {
@@ -91,19 +111,13 @@ namespace RogueAPI.Game
                 PlayerEffectsUpdating(player, gameTime);
         }
 
-        //public static int MaxHealth
-        //{
-        //    get
-        //    {
-        //        return 0;
-        //    }
-        //}
-
-        public static void CalculateStat(object statDef)
+        public static void UpdatePlayerStyle(ObjContainer player, string animationType)
         {
-            if (CalculatingStat != null)
-                CalculatingStat(statDef);
+            if (PlayerStyleUpdating != null)
+                PlayerStyleUpdating(player, animationType);
         }
+
+
 
         public class SkinShaderArgs
         {

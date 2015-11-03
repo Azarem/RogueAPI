@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace RogueAPI.Stats
 {
-    public interface IStat
+    public class ManaCostStat : StatDefinition
     {
-        int Base { get; }
-        float Multiplier { get; }
-        int Total { get; }
+        public const byte Id = 2;   
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using RogueAPI.Spells;
+using DS2DEngine;
+using RogueAPI.Game;
 
 namespace RogueAPI.Classes
 {
@@ -24,6 +26,25 @@ namespace RogueAPI.Classes
             this.AssignedSpells.Add(SpellDefinition.GetById(9));
             this.AssignedSpells.Add(SpellDefinition.GetById(10));
             this.AssignedSpells.Add(SpellDefinition.GetById(12));
+        }
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Game.Player.PlayerStyleUpdating += Player_PlayerStyleUpdating;
+        }
+
+
+        protected internal override void Deactivate(Player player)
+        {
+            Game.Player.PlayerStyleUpdating -= Player_PlayerStyleUpdating;
+            base.Deactivate(player);
+        }
+
+        private void Player_PlayerStyleUpdating(ObjContainer player, string animationType)
+        {
+            player.GetChildAt(15).Visible = true;
+            player.GetChildAt(15).ChangeSprite("Player" + animationType + "Shield_Sprite");
         }
     }
 }

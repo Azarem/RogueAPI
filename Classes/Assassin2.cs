@@ -12,13 +12,15 @@ namespace RogueAPI.Classes
             : this(Id)
         {
             this.DisplayName = "Assassin";
-            this.Description = "A risky hero. Low stats but can land devastating critical strikes.\nSPECIAL: Mist Form.";
-            this.ProfileCardDescription = "SPECIAL: Mist Form\n+15% Crit. Chance, +125% Crit. Damage.\nLow HP, MP, and Str.";
+            this.Description += "\nSPECIAL: Mist Form.";
+            this.ProfileCardDescription = "SPECIAL: Mist Form\n" + this.ProfileCardDescription;
         }
 
         protected Assassin2(byte id)
             : base(id)
         {
         }
+
+        //PlayerObj.InputControls - Toggle mist form
     }
 }

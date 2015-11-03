@@ -4,6 +4,7 @@ using System.Linq;
 using RogueAPI.Classes;
 using RogueAPI.Spells;
 using DS2DEngine;
+using RogueAPI.Game;
 
 namespace RogueAPI.Traits
 {
@@ -40,12 +41,12 @@ namespace RogueAPI.Traits
             return isFemale ? (FemaleDescription ?? Description) : Description;
         }
 
-        internal protected virtual void Activate()
+        internal protected virtual void Activate(Player player)
         {
 
         }
 
-        internal protected virtual void Deactivate()
+        internal protected virtual void Deactivate(Player player)
         {
 
         }

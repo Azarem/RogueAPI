@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DS2DEngine;
+using Microsoft.Xna.Framework;
+using RogueAPI.Game;
+using System;
 using System.Linq;
 
 namespace RogueAPI.Traits
@@ -17,6 +20,23 @@ namespace RogueAPI.Traits
             this.Rarity = 2;
 
             this.TraitConflicts.Add(Gigantism.Instance);
+        }
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Event<LevelEnterEventArgs>.Handler += LevelScreenEntered;
+        }
+
+        protected internal override void Deactivate(Player player)
+        {
+            Event<LevelEnterEventArgs>.Handler -= LevelScreenEntered;
+            base.Deactivate(player);
+        }
+
+        private void LevelScreenEntered(LevelEnterEventArgs args)
+        {
+            args.Player.Scale *= new Vector2(0.825f, 1.15f);
         }
     }
 }

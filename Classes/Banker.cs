@@ -32,5 +32,9 @@ namespace RogueAPI.Classes
             this.AssignedSpells.Add(SpellDefinition.GetById(11));
             this.AssignedSpells.Add(SpellDefinition.GetById(12));
         }
+
+        //ProfileCardScreen.SetPlayerStyle - Change player part 15 to lamp sprite
+        //PlayerObj.ChangeSprite - Change player part 15 to lamp sprite
+        //CreditsScreen.SetPlayerStyle
     }
 }
