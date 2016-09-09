@@ -74,7 +74,7 @@ namespace RogueAPI.Classes
             if (smokeTimer <= 0f)
             {
                 smokeTimer = obj.CurrentSpeed > 0f ? 0.05f : 0.15f;
-                Core.AttachEffect(EffectType.BlackSmoke, obj, null);
+                Effects.BlackSmokeEffect.Display(obj);
             }
         }
 

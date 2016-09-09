@@ -23,6 +23,8 @@ namespace RogueAPI.Spells
         protected float miscValue1, miscValue2;
         protected ProjectileDefinition baseProjectile;
         protected string[] soundList;
+        protected bool firesProjectile;
+        protected float castDelay = 0.5f;
         public readonly LinkedList<SpellDefinition, TraitDefinition> TraitConflicts;
         public readonly LinkedList<SpellDefinition, ClassDefinition> AssignedClasses;
 
@@ -40,6 +42,8 @@ namespace RogueAPI.Spells
         public virtual float MiscValue1 { get { return miscValue1; } set { miscValue1 = value; } }
         public virtual float MiscValue2 { get { return miscValue2; } set { miscValue2 = value; } }
         public virtual ProjectileDefinition Projectile { get { return baseProjectile; } set { baseProjectile = value; } }
+        public virtual bool FiresProjectile { get { return firesProjectile; } set { firesProjectile = value; } }
+        public virtual float CastDelay { get { return castDelay; } set { castDelay = value; } }
 
         //public SpellDefinition() { }
 
@@ -58,24 +62,46 @@ namespace RogueAPI.Spells
             //Make sure the damage shield has the correct target (is this necessary?)
             if (SpellId == 11)
                 inst.Target = source;
+
+
             return inst;
+        }
+
+        public void Cast(Entity source, bool megaSpell)
+        {
+
+        }
+
+        internal protected virtual float GetManaCost(Entity source)
+        {
+            var manaCost = source.GetStatObject(ManaCostStat.Id);
+            return ManaCost * manaCost.MaxValue;
         }
 
         internal protected virtual void BeginCastSpell(Entity source)
         {
             var mana = source.GetStatObject(ManaStat.Id);
-            var manaCost = source.GetStatObject(ManaCostStat.Id);
+            var totalCost = GetManaCost(source);
 
-            var totalCost = ManaCost * manaCost.MaxValue;
 
             if(mana.CurrentValue >= totalCost)
             {
                 mana.CurrentValue -= totalCost;
-                CastSpell(source, null, false);
+
+                ProjectileInstance proj = null;
+                if(FiresProjectile)
+                {
+                    proj = GetProjectileInstance(source.GameObject);
+                }
+
+                CastSpell(source, proj, false);
+
+                if (proj != null)
+                    Effects.SpellCastEffect.Display(source.GameObject.Position, proj.Angle.X);
             }
         }
 
-        protected virtual void CastSpell(Entity source, ProjectileObj projectile, bool isMega)
+        protected virtual void CastSpell(Entity source, ProjectileInstance projectile, bool isMega)
         {
 
         }

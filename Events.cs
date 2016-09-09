@@ -1,5 +1,7 @@
 ﻿using DS2DEngine;
 using Microsoft.Xna.Framework;
+using RogueAPI.Projectiles;
+using RogueAPI.Spells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,12 @@ using System.Threading.Tasks;
 
 namespace RogueAPI
 {
-    public interface IEventArgs<TSender> where TSender : class
+    public interface IEventArgs
+    {
+
+    }
+
+    public interface IEventArgs<TSender> : IEventArgs where TSender : class
     {
         TSender Sender { get; }
     }
@@ -104,7 +111,7 @@ namespace RogueAPI
         }
     }
 
-    public class KeyPressEventArgs
+    public class KeyPressEventArgs : IEventArgs
     {
         protected internal Game.InputKeys _key;
 
@@ -113,6 +120,21 @@ namespace RogueAPI
         public KeyPressEventArgs(Game.InputKeys key)
         {
             _key = key;
+        }
+    }
+
+    public class SpellCastEvent : EventArgs<GameObj>
+    {
+        protected internal ProjectileObj _projectile;
+        protected internal SpellDefinition _spell;
+
+        public ProjectileObj Projectile { get { return _projectile; } }
+        public SpellDefinition Spell { get { return _spell; } }
+
+        public SpellCastEvent(GameObj source, ProjectileObj projectile, SpellDefinition spell) : base(source)
+        {
+            _projectile = projectile;
+            _spell = spell;
         }
     }
 
@@ -136,10 +158,46 @@ namespace RogueAPI
         public Projectiles.ProjectileDefinition ProjectileDefinition { get { return _projDef; } }
 
         public ProjectileFireEvent(GameObj sender, Projectiles.ProjectileDefinition definition, Projectiles.ProjectileObj projectile)
-            :base(sender)
+            : base(sender)
         {
             _projDef = definition;
             _projectile = projectile;
+        }
+    }
+
+    public class EffectDisplayEvent : IEventArgs
+    {
+        protected internal Effects.EffectDefinition _effect;
+        protected internal SpriteObj _sprite;
+        protected internal IEnumerable<Effects.TweenCommand> _tweenCommands;
+
+        public Effects.EffectDefinition Effect { get { return _effect; } }
+        public SpriteObj Sprite { get { return _sprite; } }
+        public IEnumerable<Effects.TweenCommand> TweenCommands { get { return _tweenCommands; } set { _tweenCommands = value; } }
+
+        public EffectDisplayEvent(Effects.EffectDefinition effect, SpriteObj sprite, IEnumerable<Effects.TweenCommand> tweenCommands)
+        {
+            _effect = effect;
+            _sprite = sprite;
+            _tweenCommands = tweenCommands;
+        }
+    }
+
+    public static class Event
+    {
+        public static void AddHandler<TArgs>(Action<TArgs> handler) where TArgs : class
+        {
+            Event<TArgs>.Handler += handler;
+        }
+
+        public static void RemoveHandler<TArgs>(Action<TArgs> handler) where TArgs : class
+        {
+            Event<TArgs>.Handler -= handler;
+        }
+
+        public static void Trigger<TArgs>(this TArgs arg) where TArgs : class, IEventArgs
+        {
+            Event<TArgs>.Trigger(arg);
         }
     }
 

@@ -3,6 +3,7 @@ using System.Linq;
 using DS2DEngine;
 using Microsoft.Xna.Framework;
 using RogueAPI.Projectiles;
+using System.Collections.Generic;
 
 namespace RogueAPI
 {
@@ -28,8 +29,9 @@ namespace RogueAPI
         public static event Action ContentLoaded;
         public static Func<byte, Enemies.EnemyDifficulty, PhysicsObjContainer> CreateEnemy;
         public static Action<PhysicsObjContainer> AttachEnemyToCurrentRoom;
-        public static Action<EffectType, GameObj, Vector2?> AttachEffect;
+        //public static Action<EffectType, GameObj, Vector2?> AttachEffect;
         public static Func<ProjectileDefinition, GameObj, GameObj, ProjectileObj> FireProjectile;
+        public static Func<IEnumerable<BlankObj>> GetCurrentRoomTerrainObjects;
 
         //public static event Action<string, Screen, PhysicsObjContainer, object> ScreenEntered;
         //public static event Action<string, Screen, PhysicsObjContainer, object> ScreenExited;
@@ -47,6 +49,21 @@ namespace RogueAPI
         {
             if (ContentLoaded != null)
                 ContentLoaded();
+        }
+
+        public static TList[] Copy<TList>(this IList<TList> list)
+        {
+            if (list == null)
+                return null;
+
+            var len = list.Count;
+            var ix = -1;
+            var newArr = new TList[len];
+
+            while (++ix < len)
+                newArr[ix] = list[ix];
+
+            return newArr;
         }
 
         //public static void OnScreenEntered(string type, Screen screen, PhysicsObjContainer player, object args)
@@ -69,11 +86,11 @@ namespace RogueAPI
     }
 
 
-    public enum EffectType
-    {
-        BlackSmoke,
-        ChestSparkle,
-        QuestionMark,
-        FahRoDus
-    }
+    //public enum EffectType
+    //{
+    //    BlackSmoke,
+    //    ChestSparkle,
+    //    QuestionMark,
+    //    FahRoDus
+    //}
 }

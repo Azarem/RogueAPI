@@ -47,7 +47,7 @@ namespace RogueAPI.Traits
                 if (questionTimer <= 0f)
                 {
                     questionTimer = 0.4f;
-                    Core.AttachEffect(EffectType.QuestionMark, player, new Vector2(player.X, player.Bounds.Top));
+                    Effects.QuestionMarkEffect.Display(new Vector2(player.X, player.Bounds.Top));
                 }
             }
         }

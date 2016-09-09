@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Abilities\AbilityDefinition.cs" />
     <Compile Include="Abilities\FahRoDus.cs" />
+    <Compile Include="Abilities\KnightShield.cs" />
     <Compile Include="Classes\Assassin.cs" />
     <Compile Include="Classes\Assassin2.cs" />
     <Compile Include="Classes\Banker.cs" />
@@ -90,6 +91,21 @@
     <Compile Include="Combat\DamageModifier.cs" />
     <Compile Include="Content\SpriteUtil.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Effects\BlackSmokeEffect.cs" />
+    <Compile Include="Effects\ChestSparkleEffect.cs" />
+    <Compile Include="Effects\CriticalTextEffect.cs" />
+    <Compile Include="Effects\DashEffect.cs" />
+    <Compile Include="Effects\DeathEffect.cs" />
+    <Compile Include="Effects\DoubleJumpEffect.cs" />
+    <Compile Include="Effects\DustEffect.cs" />
+    <Compile Include="Effects\EarthParticleEffect.cs" />
+    <Compile Include="Effects\EffectDefinition.cs" />
+    <Compile Include="Effects\EnemyImpactEffect.cs" />
+    <Compile Include="Effects\ExplosionEffect.cs" />
+    <Compile Include="Effects\FusRoDahTextEffect.cs" />
+    <Compile Include="Effects\QuestionMarkEffect.cs" />
+    <Compile Include="Effects\SpellCastEffect.cs" />
+    <Compile Include="Effects\TweenCommand.cs" />
     <Compile Include="Enemies\Chicken.cs" />
     <Compile Include="Enemies\EnemyBase.cs" />
     <Compile Include="Enemies\EnemyDifficulty.cs" />
@@ -100,7 +116,8 @@
     <Compile Include="Events.cs" />
     <Compile Include="Game\AncestorPortrait.cs" />
     <Compile Include="Game\AttachmentType.cs" />
-    <Compile Include="Game\Effects.cs" />
+    <Compile Include="Game\InputManager.cs" />
+    <Compile Include="Game\Shaders.cs" />
     <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\Fonts.cs" />
     <Compile Include="Game\InputKeys.cs" />
@@ -180,6 +197,7 @@
     <Compile Include="Spells\TimeBomb.cs" />
     <Compile Include="Spells\TimeStop.cs" />
     <Compile Include="Spells\Translocator.cs" />
+    <Compile Include="States\StateDefinition.cs" />
     <Compile Include="Stats\HealthStat.cs" />
     <Compile Include="Stats\ManaCostStat.cs" />
     <Compile Include="Stats\ManaStat.cs" />

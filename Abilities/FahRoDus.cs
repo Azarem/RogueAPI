@@ -47,7 +47,7 @@ namespace RogueAPI.Abilities
         private void PrepareRippleRender(Camera2D camera, RenderStep step, GameTime gameTime)
         {
             Vector2 position = Game.Player.Instance.GameObject.Position - camera.TopLeftCorner;
-            var effect = Effects.RippleEffect;
+            var effect = Shaders.Ripple;
 
             effect.Parameters["width"].SetValue(Magnitude);
             effect.Parameters["xcenter"].SetValue(position.X / 1320f);
@@ -72,7 +72,7 @@ namespace RogueAPI.Abilities
             Tween.AddEndHandlerToLastTween(proj, "KillProjectile");
             SoundManager.PlaySound("Cast_FasRoDus");
 
-            Core.AttachEffect(EffectType.FahRoDus, null, new Vector2(player.X, player.Bounds.Top));
+            Effects.FusRoDahTextEffect.Display(new Vector2(player.X, player.Bounds.Top));
 
             Magnitude = 0;
             Tween.To(this, 1f, new Easing(Tween.EaseNone), "Magnitude", "3");

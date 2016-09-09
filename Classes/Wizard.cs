@@ -36,31 +36,15 @@ namespace RogueAPI.Classes
             this.AssignedSpells.Add(SpellDefinition.GetById(12));
         }
 
-        private float sparkleCounter;
-
         protected internal override void Activate(Player player)
         {
             base.Activate(player);
-            Game.Player.PlayerEffectsUpdating += Player_PlayerEffectsUpdating;
-            sparkleCounter = 0.2f;
         }
 
         protected internal override void Deactivate(Player player)
         {
-            Game.Player.PlayerEffectsUpdating -= Player_PlayerEffectsUpdating;
             base.Deactivate(player);
         }
 
-        void Player_PlayerEffectsUpdating(ObjContainer player, GameTime gameTime)
-        {
-            sparkleCounter -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (sparkleCounter <= 0f)
-            {
-                sparkleCounter = 0.2f;
-                Core.AttachEffect(EffectType.ChestSparkle, player, null);
-                Core.AttachEffect(EffectType.ChestSparkle, player, null);
-            }
-        }
     }
 }

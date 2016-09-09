@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using RogueAPI.Game;
 using RogueAPI.Spells;
+using DS2DEngine;
+using Microsoft.Xna.Framework;
 
 namespace RogueAPI.Classes
 {
@@ -8,6 +11,8 @@ namespace RogueAPI.Classes
     {
         public const byte Id = 6;
         public static readonly SpellSword Instance = new SpellSword();
+
+        private float _sparkleTimer = 0;
 
         private SpellSword()
             : this(Id)
@@ -30,6 +35,30 @@ namespace RogueAPI.Classes
             this.AssignedSpells.Add(SpellDefinition.GetById(9));
             this.AssignedSpells.Add(SpellDefinition.GetById(10));
             this.AssignedSpells.Add(SpellDefinition.GetById(11));
+        }
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Player.PlayerEffectsUpdating += PlayerEffectsUpdating;
+            _sparkleTimer = 0.2f;
+        }
+
+        protected internal override void Deactivate(Player player)
+        {
+            Player.PlayerEffectsUpdating -= PlayerEffectsUpdating;
+            base.Deactivate(player);
+        }
+
+        private void PlayerEffectsUpdating(ObjContainer player, GameTime gameTime)
+        {
+            _sparkleTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (_sparkleTimer <= 0)
+            {
+                _sparkleTimer = 0.2f;
+                Effects.ChestSparkleEffect.Display(player.Position);
+                Effects.ChestSparkleEffect.Display(player.Position);
+            }
         }
     }
 }

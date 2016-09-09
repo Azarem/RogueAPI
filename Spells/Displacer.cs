@@ -34,18 +34,22 @@ namespace RogueAPI.Spells
             DamageMultiplier = 1.0f;
         }
 
-        protected override void CastSpell(Entity source, ProjectileObj projectile, bool isMega)
+        protected override void CastSpell(Entity source, ProjectileInstance projectile, bool isMega)
         {
             base.CastSpell(source, projectile, isMega);
 
+
             var gameObj = source.GameObject;
+            var projObj = projectile.Source;
+
+            projObj.Rotation = 0;
 
             int closestDistance = int.MaxValue;
             BlankObj closestObject = null;
 
             Vector2 pos;
 
-            foreach (BlankObj terrainObj in room.TerrainObjList)
+            foreach (BlankObj terrainObj in Core.GetCurrentRoomTerrainObjects())
             {
                 pos = Vector2.Zero;
                 float distance = float.MaxValue;
@@ -55,22 +59,28 @@ namespace RogueAPI.Spells
 
                 if (gameObj.Flip == SpriteEffects.None)
                 {
-                    if (terrainObj.X > projectile.X && terrainObj.Bounds.Top < projectile.Bounds.Bottom && terrainObj.Bounds.Bottom > projectile.Bounds.Top)
+                    if (terrainObj.X > projObj.X && terrainObj.Bounds.Top < projObj.Bounds.Bottom && terrainObj.Bounds.Bottom > projObj.Bounds.Top)
                     {
                         if (terrainObj.Rotation < 0f)
-                            pos = CollisionMath.LineToLineIntersect(projectile.Position, new Vector2(projectile.X + 6600f, projectile.Y), CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
+                            pos = CollisionMath.LineToLineIntersect(projObj.Position, new Vector2(projObj.X + 6600f, projObj.Y), CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
                         else if (terrainObj.Rotation > 0f)
-                            pos = CollisionMath.LineToLineIntersect(projectile.Position, new Vector2(projectile.X + 6600f, projectile.Y), CollisionMath.LowerLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero));
-                        distance = (pos == Vector2.Zero ? (float)(terrainObj.Bounds.Left - projectile.Bounds.Right) : pos.X - projectile.X);
+                            pos = CollisionMath.LineToLineIntersect(projObj.Position, new Vector2(projObj.X + 6600f, projObj.Y), CollisionMath.LowerLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero));
+
+                        distance = pos == Vector2.Zero 
+                            ? terrainObj.Bounds.Left - projObj.Bounds.Right 
+                            : pos.X - projObj.X;
                     }
                 }
-                else if (terrainObj.X < projectile.X && terrainObj.Bounds.Top < projectile.Bounds.Bottom && terrainObj.Bounds.Bottom > projectile.Bounds.Top)
+                else if (terrainObj.X < projObj.X && terrainObj.Bounds.Top < projObj.Bounds.Bottom && terrainObj.Bounds.Bottom > projObj.Bounds.Top)
                 {
                     if (terrainObj.Rotation < 0f)
-                        pos = CollisionMath.LineToLineIntersect(new Vector2(projectile.X - 6600f, projectile.Y), projectile.Position, CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.LowerRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
+                        pos = CollisionMath.LineToLineIntersect(new Vector2(projObj.X - 6600f, projObj.Y), projObj.Position, CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.LowerRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
                     else if (terrainObj.Rotation > 0f)
-                        pos = CollisionMath.LineToLineIntersect(new Vector2(projectile.X - 6600f, projectile.Y), projectile.Position, CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
-                    distance = (pos == Vector2.Zero ? (float)(projectile.Bounds.Left - terrainObj.Bounds.Right) : projectile.X - pos.X);
+                        pos = CollisionMath.LineToLineIntersect(new Vector2(projObj.X - 6600f, projObj.Y), projObj.Position, CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
+
+                    distance = pos == Vector2.Zero 
+                        ? projObj.Bounds.Left - terrainObj.Bounds.Right 
+                        : projObj.X - pos.X;
                 }
 
                 if (distance < closestDistance)
@@ -82,18 +92,15 @@ namespace RogueAPI.Spells
 
             if (closestObject != null)
             {
-                if (gameObj.Flip == SpriteEffects.None)
-                {
-                    if (closestObject.Rotation != 0f)
-                        gameObj.X += closestDistance - gameObj.Width / 2f;
-                    else
-                        gameObj.X += closestDistance - gameObj.TerrainBounds.Width / 2f;
-                }
-                else if (closestObject.Rotation == 0f)
-                    gameObj.X -= closestDistance - gameObj.TerrainBounds.Width / 2f;
-                else
-                    gameObj.X -= closestDistance - gameObj.Width / 2f;
+                var offsetX = closestDistance - (closestObject.Rotation != 0f ? gameObj.Width : gameObj.TerrainBounds.Width) / 2f;
+                if (gameObj.Flip != SpriteEffects.None)
+                    offsetX = -offsetX;
+
+                gameObj.X += offsetX;
+                
             }
+
+            //projObj.KillProjectile();
         }
 
     }

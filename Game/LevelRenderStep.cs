@@ -13,6 +13,9 @@
         DarknessToFront = 9,
         HUDToFront = 10,
         BorderToFront = 11,
-        ExtraFrontToBack = 12
+        ExtraFrontToBack = 12,
+        NostalgiaBackToFront = 13,
+        NostalgiaFrontToBack = 14,
+        BackToScreenFinal = 20
     }
 }
