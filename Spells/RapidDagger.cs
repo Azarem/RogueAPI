@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
 
 namespace RogueAPI.Spells
 {
@@ -11,22 +7,31 @@ namespace RogueAPI.Spells
         public const byte Id = 14;
         public static readonly RapidDagger Instance = new RapidDagger();
 
-        private RapidDagger()
-            : this(Id)
-        {
-            DisplayName = "Dagger";
-            Icon = "DaggerIcon_Sprite";
-            Description = string.Format("[Input:{0}]  Fires a dagger directly in front of you.", (int)Game.InputKeys.PlayerSpell1);
-        }
+        private RapidDagger() : this(Id) { }
 
         protected RapidDagger(byte id)
             : base(id)
         {
-            MiscValue1 = 0f;
-            MiscValue2 = 0f;
-            Rarity = 1;
-            ManaCost = 10;
-            DamageMultiplier = 1.0f;
+            displayName = "Rapid Dagger";
+            icon = "RapidDaggerIcon_Sprite";
+            description = string.Format("[Input:{0}]  Fire a barrage of daggers.", (int)Game.InputKeys.PlayerSpell1);
+            baseProjectile.SpriteName = "LaserSpell_Sprite";
+            baseProjectile.Angle = new Vector2(0f, 0f);
+            baseProjectile.Speed = new Vector2(0f, 0f);
+            baseProjectile.IsWeighted = false;
+            baseProjectile.IsCollidable = false;
+            baseProjectile.StartingRotation = 0f;
+            baseProjectile.FollowArc = false;
+            baseProjectile.RotationSpeed = 0f;
+            baseProjectile.DestroysWithTerrain = false;
+            baseProjectile.DestroysWithEnemy = false;
+            baseProjectile.CollidesWithTerrain = false;
+            baseProjectile.LockPosition = true;
+            miscValue1 = 0f;
+            miscValue2 = 0f;
+            rarity = 1;
+            manaCost = 30;
+            damageMultiplier = 0.75f;
         }
     }
 }

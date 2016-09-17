@@ -28,7 +28,7 @@ namespace RogueAPI.Effects
             AnimationFlag = true;
         }
 
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
         {
             TweenCommand off;
             var tweens = _defaultTweens.Copy();
@@ -38,6 +38,11 @@ namespace RogueAPI.Effects
             off.Properties[3] = CDGMath.RandomInt(-70, -50).ToString();
 
             return tweens;
+        }
+
+        public static void Display(GameObj source)
+        {
+            Display(new Vector2(source.X, source.Bounds.Top));
         }
 
         public static void Display(Vector2 position)

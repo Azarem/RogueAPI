@@ -31,7 +31,7 @@ namespace RogueAPI
         GameTime GameTime { get; }
     }
 
-    public abstract class EventArgs<TSender> where TSender : class
+    public abstract class EventArgs<TSender> : IEventArgs where TSender : class
     {
         protected internal TSender _sender;
         public TSender Sender { get { return _sender; } }
@@ -123,6 +123,30 @@ namespace RogueAPI
         }
     }
 
+    public class InputEventHandler : IEventArgs
+    {
+        public readonly Game.InputFlags Pressed;
+        public readonly Game.InputFlags NewlyPressed;
+
+        public InputEventHandler()
+        {
+            Pressed = Game.InputManager.PressedFlags;
+            NewlyPressed = Game.InputManager.NewlyPressedFlags;
+        }
+    }
+
+    public class PlayerUpdateEvent : IEventArgs
+    {
+        public readonly float ElapsedSeconds;
+        public readonly Game.Player Player;
+
+        public PlayerUpdateEvent(GameTime gameTime)
+        {
+            ElapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Player = Game.Player.Instance;
+        }
+    }
+
     public class SpellCastEvent : EventArgs<GameObj>
     {
         protected internal ProjectileObj _projectile;
@@ -167,19 +191,17 @@ namespace RogueAPI
 
     public class EffectDisplayEvent : IEventArgs
     {
-        protected internal Effects.EffectDefinition _effect;
-        protected internal SpriteObj _sprite;
-        protected internal IEnumerable<Effects.TweenCommand> _tweenCommands;
+        public readonly Effects.EffectDefinition Effect;
+        public readonly Effects.EffectSpriteInstance Sprite;
+        //public readonly GameObj Source;
+        public IList<Effects.TweenCommand> TweenCommands;
 
-        public Effects.EffectDefinition Effect { get { return _effect; } }
-        public SpriteObj Sprite { get { return _sprite; } }
-        public IEnumerable<Effects.TweenCommand> TweenCommands { get { return _tweenCommands; } set { _tweenCommands = value; } }
-
-        public EffectDisplayEvent(Effects.EffectDefinition effect, SpriteObj sprite, IEnumerable<Effects.TweenCommand> tweenCommands)
+        public EffectDisplayEvent(Effects.EffectDefinition effect, Effects.EffectSpriteInstance sprite, IList<Effects.TweenCommand> tweenCommands)
         {
-            _effect = effect;
-            _sprite = sprite;
-            _tweenCommands = tweenCommands;
+            Effect = effect;
+            Sprite = sprite;
+            TweenCommands = tweenCommands;
+            //Source = source;
         }
     }
 

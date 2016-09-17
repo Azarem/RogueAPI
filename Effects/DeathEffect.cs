@@ -32,7 +32,7 @@ namespace RogueAPI.Effects
             AnimationFlag = true;
         }
 
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
         {
             var duration = CDGMath.RandomFloat(0.5f, 1f);
             var scale = CDGMath.RandomFloat(0f, 0.1f);

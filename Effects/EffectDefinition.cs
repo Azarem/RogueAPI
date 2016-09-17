@@ -10,7 +10,7 @@ namespace RogueAPI.Effects
 {
     public class EffectDefinition
     {
-        public static Func<SpriteObj> AllocateSprite;
+        public static Func<EffectSpriteInstance> AllocateSprite;
 
         protected string _spriteName;
         //protected bool _visible;
@@ -20,6 +20,7 @@ namespace RogueAPI.Effects
         protected bool? _animateFlag;
         protected float _animationDelay;
         protected int _outlineWidth;
+
         //protected IEnumerable<TweenCommand> _tweenCommands;
 
         public virtual string SpriteName { get { return _spriteName; } set { _spriteName = value; } }
@@ -32,7 +33,7 @@ namespace RogueAPI.Effects
         public virtual int OutlineWidth { get { return _outlineWidth; } set { _outlineWidth = value; } }
         //public virtual IEnumerable<TweenCommand> TweenCommands { get { return _tweenCommands; } set { _tweenCommands = value; } }
 
-        protected virtual SpriteObj CreateSprite(Vector2 position)
+        protected virtual EffectSpriteInstance CreateSprite(Vector2 position)
         {
             var sprite = AllocateSprite();
             sprite.ChangeSprite(SpriteName);
@@ -46,71 +47,72 @@ namespace RogueAPI.Effects
             return sprite;
         }
 
-        protected virtual void Animate(SpriteObj sprite)
+        protected virtual void Animate(EffectSpriteInstance sprite)
         {
             if (AnimationFlag != null)
                 sprite.PlayAnimation(AnimationFlag.Value);
         }
 
-        protected virtual IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+        protected virtual IList<TweenCommand> GetTweenCommands(EffectSpriteInstance sprite)
         {
             return null;
         }
 
-        protected virtual void ApplyTweens(SpriteObj sprite, IEnumerable<TweenCommand> commands)
+        protected virtual void ApplyTweens(EffectSpriteInstance sprite, IList<TweenCommand> commands)
         {
             if (commands != null)
                 foreach (var t in commands)
                     t.Call(sprite);
         }
 
-        protected virtual void Run(Vector2 position)
+        protected virtual void Run(Vector2 position, Action<EffectDisplayEvent> initHandler = null)
         {
             var sprite = CreateSprite(position);
             var tweens = GetTweenCommands(sprite);
-            var args = new EffectDisplayEvent(this, sprite, tweens);
-            args.Trigger();
+            var evt = new EffectDisplayEvent(this, sprite, tweens);
+            initHandler?.Invoke(evt);
+            evt.Trigger();
             Animate(sprite);
-            ApplyTweens(sprite, args.TweenCommands);
+            ApplyTweens(sprite, evt.TweenCommands);
         }
 
     }
 
-    public class EffectDefinition<TArg> : EffectDefinition
-    {
-        protected override SpriteObj CreateSprite(Vector2 position)
-        {
-            return CreateSprite(position, default(TArg));
-        }
+    //public class EffectDefinition<TArg> : EffectDefinition
+    //{
+    //    protected override EffectSpriteInstance CreateSprite(Vector2 position)
+    //    {
+    //        return CreateSprite(position, default(TArg));
+    //    }
 
-        protected virtual SpriteObj CreateSprite(Vector2 position, TArg arg)
-        {
-            return base.CreateSprite(position);
-        }
+    //    protected virtual EffectSpriteInstance CreateSprite(Vector2 position, TArg arg)
+    //    {
+    //        return base.CreateSprite(position);
+    //    }
 
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
-        {
-            return GetTweenCommands(obj, default(TArg));
-        }
+    //    protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+    //    {
+    //        return GetTweenCommands(obj, default(TArg));
+    //    }
 
-        protected virtual IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj, TArg arg)
-        {
-            return base.GetTweenCommands(obj);
-        }
+    //    protected virtual IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj, TArg arg)
+    //    {
+    //        return base.GetTweenCommands(obj);
+    //    }
 
-        protected override void Run(Vector2 position)
-        {
-            Run(position, default(TArg));
-        }
+    //    protected override void Run(Vector2 position, GameObj source = null)
+    //    {
+    //        Run(position, default(TArg), source);
+    //    }
 
-        protected virtual void Run(Vector2 position, TArg arg)
-        {
-            var sprite = CreateSprite(position, arg);
-            var tweens = GetTweenCommands(sprite, arg);
-            var args = new EffectDisplayEvent(this, sprite, tweens);
-            args.Trigger();
-            Animate(sprite);
-            ApplyTweens(sprite, args.TweenCommands);
-        }
-    }
+    //    protected virtual void Run(Vector2 position, TArg arg, GameObj source = null)
+    //    {
+    //        var sprite = CreateSprite(position, arg);
+    //        var tweens = GetTweenCommands(sprite, arg);
+    //        var evt = new EffectDisplayEvent(this, sprite, tweens, source);
+    //        evt.Trigger();
+    //        Animate(sprite);
+    //        ApplyTweens(sprite, evt.TweenCommands);
+    //    }
+    //}
 }

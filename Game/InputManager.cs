@@ -11,12 +11,15 @@ namespace RogueAPI.Game
     public static class InputManager
     {
         //private static uint _lastInputFlags;
-        private static int _currentInputFlags;
-        private static int _newInputFlags;
+        private static InputFlags _currentInputFlags;
+        private static InputFlags _newInputFlags;
 
         private static InputKeys?[] _buttonMap = new InputKeys?[31];
         private static Dictionary<Keys, InputKeys> _keyMap = new Dictionary<Keys, InputKeys>();
         private static List<ThumbStickMap> _stickMap = new List<ThumbStickMap>();
+
+        public static InputFlags PressedFlags { get { return _currentInputFlags; } }
+        public static InputFlags NewlyPressedFlags { get { return _newInputFlags; } }
 
         public static float ThumbstickDeadzone;
 
@@ -106,7 +109,7 @@ namespace RogueAPI.Game
             _stickMap.Clear();
         }
 
-        private static int GetKeyFlags()
+        private static InputFlags GetKeyFlags()
         {
             int keyFlags = 0;
 
@@ -118,10 +121,10 @@ namespace RogueAPI.Game
                     keyFlags |= 1 << (int)inputKey;
             }
 
-            return keyFlags;
+            return (InputFlags)keyFlags;
         }
 
-        private static int GetStickFlags(GamePadState state)
+        private static InputFlags GetStickFlags(GamePadState state)
         {
             int keyFlags = 0;
 
@@ -139,10 +142,10 @@ namespace RogueAPI.Game
                 }
             }
 
-            return keyFlags;
+            return (InputFlags)keyFlags;
         }
 
-        private static int GetButtonFlags(GamePadState state)
+        private static InputFlags GetButtonFlags(GamePadState state)
         {
             int keyFlags = 0;
 
@@ -226,7 +229,7 @@ namespace RogueAPI.Game
                 index++;
             }
 
-            return keyFlags;
+            return (InputFlags)keyFlags;
         }
 
         private static Vector2 ApplyStickDeadZone(Vector2 pos, float deadZoneSize)
@@ -257,28 +260,46 @@ namespace RogueAPI.Game
 
         public static bool IsPressed(InputKeys key)
         {
-            return ((1 << (int)key) & _currentInputFlags) != 0;
+            return ((1 << (int)key) & (int)_currentInputFlags) != 0;
+        }
+
+        public static bool IsPressed(InputFlags flags)
+        {
+            return (_currentInputFlags & flags) != InputFlags.None;
+        }
+        public static bool IsPressedAll(InputFlags flags)
+        {
+            return (_currentInputFlags & flags) == flags;
         }
 
         public static bool IsPressedOr(params InputKeys[] keys)
         {
             foreach (var k in keys)
-                if (((1 << (int)k) & _currentInputFlags) != 0)
+                if (((1 << (int)k) & (int)_currentInputFlags) != 0)
                     return true;
             return false;
         }
 
         public static bool IsNewlyPressed(InputKeys key)
         {
-            return ((1 << (int)key) & _newInputFlags) != 0;
+            return ((1 << (int)key) & (int)_newInputFlags) != 0;
         }
 
         public static bool IsNewlyPressedOr(params InputKeys[] keys)
         {
             foreach (var k in keys)
-                if (((1 << (int)k) & _newInputFlags) != 0)
+                if (((1 << (int)k) & (int)_newInputFlags) != 0)
                     return true;
             return false;
+        }
+
+        public static bool IsNewlyPressed(InputFlags flags)
+        {
+            return (_newInputFlags & flags) != InputFlags.None;
+        }
+        public static bool IsNewlyPressedAll(InputFlags flags)
+        {
+            return (_newInputFlags & flags) == flags;
         }
 
     }

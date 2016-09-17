@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RogueAPI.Game;
+﻿using RogueAPI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using DS2DEngine;
 using RogueAPI.Projectiles;
+using System;
 
 namespace RogueAPI.Spells
 {
@@ -16,91 +12,123 @@ namespace RogueAPI.Spells
         public const byte Id = 7;
         public static readonly Displacer Instance = new Displacer();
 
-        private Displacer()
-            : this(Id)
-        {
-            DisplayName = "Dagger";
-            Icon = "DaggerIcon_Sprite";
-            Description = string.Format("[Input:{0}]  Fires a dagger directly in front of you.", (int)Game.InputKeys.PlayerSpell1);
-        }
+        private Displacer() : this(Id) { }
 
         protected Displacer(byte id)
             : base(id)
         {
-            MiscValue1 = 0f;
-            MiscValue2 = 0f;
-            Rarity = 1;
-            ManaCost = 10;
-            DamageMultiplier = 1.0f;
+            displayName = "Displacer";
+            icon = "DisplacerIcon_Sprite";
+            description = string.Format("[Input:{0}]  Sends out a marker which teleports you.", (int)Game.InputKeys.PlayerSpell1);
+         
+            rarity = 0;
+            manaCost = 10;
+            damageMultiplier = 0f;
         }
 
-        protected override void CastSpell(Entity source, ProjectileInstance projectile, bool isMega)
+        protected override bool OnCast(Entity source)
         {
-            base.CastSpell(source, projectile, isMega);
+            var proj = DisplacerProjectile.Fire(source.GameObject);
 
+            proj.Rotation = 0;
+            RunTeleport(proj);
+            proj.KillProjectile();
 
-            var gameObj = source.GameObject;
-            var projObj = projectile.Source;
+            Effects.SpellCastEffect.Display(proj.Position, proj.Rotation, true);
 
-            projObj.Rotation = 0;
+            return true;
+        }
+
+        public static void RunTeleport(ProjectileObj proj)
+        {
+            var source = proj.Source as PhysicsObjContainer;
 
             int closestDistance = int.MaxValue;
-            BlankObj closestObject = null;
-
-            Vector2 pos;
+            BlankObj closestObj = null;
+            bool flip = source.Flip != SpriteEffects.None;
 
             foreach (BlankObj terrainObj in Core.GetCurrentRoomTerrainObjects())
             {
-                pos = Vector2.Zero;
+                if (terrainObj.Bounds.Top >= proj.Bounds.Bottom || terrainObj.Bounds.Bottom <= proj.Bounds.Top)
+                    continue;
+
+                var point = Vector2.Zero;
                 float distance = float.MaxValue;
 
-                //Get object bounds (non-rotated)
-                var bounds = new Rectangle((int)terrainObj.X, (int)terrainObj.Y, terrainObj.Width, terrainObj.Height);
+                Vector2 start1 = Vector2.Zero, end1 = Vector2.Zero;
+                Func<Rectangle, float, Vector2, Vector2> startFunc = null, endFunc = null;
 
-                if (gameObj.Flip == SpriteEffects.None)
+                if (!flip)
                 {
-                    if (terrainObj.X > projObj.X && terrainObj.Bounds.Top < projObj.Bounds.Bottom && terrainObj.Bounds.Bottom > projObj.Bounds.Top)
-                    {
-                        if (terrainObj.Rotation < 0f)
-                            pos = CollisionMath.LineToLineIntersect(projObj.Position, new Vector2(projObj.X + 6600f, projObj.Y), CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
-                        else if (terrainObj.Rotation > 0f)
-                            pos = CollisionMath.LineToLineIntersect(projObj.Position, new Vector2(projObj.X + 6600f, projObj.Y), CollisionMath.LowerLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero));
+                    if (terrainObj.X <= proj.X)
+                        continue;
 
-                        distance = pos == Vector2.Zero 
-                            ? terrainObj.Bounds.Left - projObj.Bounds.Right 
-                            : pos.X - projObj.X;
+                    if (terrainObj.Rotation != 0)
+                    {
+                        start1 = proj.Position;
+                        end1 = new Vector2(proj.X + 6600f, proj.Y);
+                        if (terrainObj.Rotation < 0f)
+                        {
+                            startFunc = CollisionMath.UpperLeftCorner;
+                            endFunc = CollisionMath.UpperRightCorner;
+                        }
+                        else
+                        {
+                            startFunc = CollisionMath.LowerLeftCorner;
+                            endFunc = CollisionMath.UpperLeftCorner;
+                        }
                     }
                 }
-                else if (terrainObj.X < projObj.X && terrainObj.Bounds.Top < projObj.Bounds.Bottom && terrainObj.Bounds.Bottom > projObj.Bounds.Top)
+                else
                 {
-                    if (terrainObj.Rotation < 0f)
-                        pos = CollisionMath.LineToLineIntersect(new Vector2(projObj.X - 6600f, projObj.Y), projObj.Position, CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.LowerRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
-                    else if (terrainObj.Rotation > 0f)
-                        pos = CollisionMath.LineToLineIntersect(new Vector2(projObj.X - 6600f, projObj.Y), projObj.Position, CollisionMath.UpperLeftCorner(bounds, terrainObj.Rotation, Vector2.Zero), CollisionMath.UpperRightCorner(bounds, terrainObj.Rotation, Vector2.Zero));
+                    if (terrainObj.X >= proj.X)
+                        continue;
 
-                    distance = pos == Vector2.Zero 
-                        ? projObj.Bounds.Left - terrainObj.Bounds.Right 
-                        : projObj.X - pos.X;
+                    if (terrainObj.Rotation != 0)
+                    {
+                        start1 = new Vector2(proj.X - 6600f, proj.Y);
+                        end1 = proj.Position;
+                        if (terrainObj.Rotation < 0f)
+                        {
+                            startFunc = CollisionMath.UpperRightCorner;
+                            endFunc = CollisionMath.LowerRightCorner;
+                        }
+                        else
+                        {
+                            startFunc = CollisionMath.UpperLeftCorner;
+                            endFunc = CollisionMath.UpperRightCorner;
+                        }
+                    }
                 }
+
+                if (startFunc != null)
+                {
+                    var bounds = new Rectangle((int)terrainObj.X, (int)terrainObj.Y, terrainObj.Width, terrainObj.Height);
+                    var start2 = startFunc(bounds, terrainObj.Rotation, Vector2.Zero);
+                    var end2 = endFunc(bounds, terrainObj.Rotation, Vector2.Zero);
+                    point = CollisionMath.LineToLineIntersect(start1, end1, start2, end2);
+                }
+
+                if (point == Vector2.Zero)
+                    distance = !flip ? (terrainObj.Bounds.Left - proj.Bounds.Right) : (proj.Bounds.Left - terrainObj.Bounds.Right);
+                else
+                    distance = !flip ? (point.X - proj.X) : (proj.X - point.X);
 
                 if (distance < closestDistance)
                 {
                     closestDistance = (int)distance;
-                    closestObject = terrainObj;
+                    closestObj = terrainObj;
                 }
             }
 
-            if (closestObject != null)
+            if (closestObj != null)
             {
-                var offsetX = closestDistance - (closestObject.Rotation != 0f ? gameObj.Width : gameObj.TerrainBounds.Width) / 2f;
-                if (gameObj.Flip != SpriteEffects.None)
-                    offsetX = -offsetX;
+                var newOffset = closestDistance - (closestObj.Rotation != 0f ? source.Width : source.TerrainBounds.Width) / 2f;
+                if (flip)
+                    newOffset = -newOffset;
 
-                gameObj.X += offsetX;
-                
+                source.X += newOffset;
             }
-
-            //projObj.KillProjectile();
         }
 
     }

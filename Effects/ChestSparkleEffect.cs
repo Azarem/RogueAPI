@@ -15,7 +15,7 @@ namespace RogueAPI.Effects
     {
         public static readonly ChestSparkleEffect Instance = new ChestSparkleEffect();
 
-        private static readonly IEnumerable<TweenCommand> _defaultCommands = new TweenCommand[] {
+        private static readonly TweenCommand[] _defaultCommands = new TweenCommand[] {
             new TweenCommand(false, 0.2f, Linear.EaseNone, "Opacity", "1") { EndHandler = new TweenEndHandler("StopAnimation") }
         };
 
@@ -38,7 +38,7 @@ namespace RogueAPI.Effects
             AnimationFlag = false;
         }
 
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
         {
             return _defaultCommands;
         }

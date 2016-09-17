@@ -27,15 +27,22 @@ namespace RogueAPI.Effects
             AnimationFlag = true;
         }
 
-        protected override SpriteObj CreateSprite(Vector2 position)
+        protected override EffectSpriteInstance CreateSprite(Vector2 position)
         {
             var sprite = base.CreateSprite(position);
-            CDGMath.GetCirclePosition(sprite.Rotation - 90f, 40f, position);
+
+            sprite.Position = CDGMath.GetCirclePosition(sprite.Rotation - 90f, 40f, position);
+
             return sprite;
         }
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
         {
             return _defaultCommands;
+        }
+
+        public static void Display(GameObj source)
+        {
+            Display(new Vector2(source.X, source.Bounds.Top));
         }
 
         public static void Display(Vector2 position)

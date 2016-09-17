@@ -11,7 +11,7 @@ using Tweener.Ease;
 
 namespace RogueAPI.Effects
 {
-    public class BlackSmokeEffect : EffectDefinition<bool>
+    public class BlackSmokeEffect : EffectDefinition
     {
         public static readonly BlackSmokeEffect Instance = new BlackSmokeEffect();
         private static readonly TweenCommand[] _defaultCommands = new TweenCommand[] {
@@ -33,32 +33,14 @@ namespace RogueAPI.Effects
             AnimationFlag = true;
         }
 
-        protected override SpriteObj CreateSprite(Vector2 position, bool invert)
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance sprite)
         {
-            var sprite = base.CreateSprite(position, invert);
-
-            if (CDGMath.RandomPlusMinus() < 0)
-                sprite.Flip = SpriteEffects.FlipHorizontally;
-
-            if (CDGMath.RandomPlusMinus() < 0)
-                sprite.Flip = SpriteEffects.FlipVertically;
-
-            return sprite;
-        }
-
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj, bool invert)
-        {
-            var offsetX = CDGMath.RandomInt(50, 100);
-
-            if (invert)
-                offsetX = -offsetX;
-
-            TweenCommand off;
             var tweens = _defaultCommands.Copy();
-            tweens[2] = off = tweens[2].Clone();
+            var off = tweens[2].Clone();
+            tweens[2] = off;
 
-            off.Properties[1] = offsetX.ToString();
-            off.Properties[3] = CDGMath.RandomInt(-100, 100).ToString();
+            off.Properties[1] = CDGMath.RandomInt(-50, 50).ToString();
+            off.Properties[3] = CDGMath.RandomInt(-50, 50).ToString();
             off.Properties[5] = CDGMath.RandomInt(-45, 45).ToString();
 
             return tweens;
@@ -70,7 +52,23 @@ namespace RogueAPI.Effects
             float posX = invertX ? source.Bounds.Left : source.Bounds.Right;
 
             for (int i = 0; i < 2; i++)
-                Instance.Run(new Vector2(posX, source.Y + CDGMath.RandomInt(-40, 40)), invertX);
+                Instance.Run(new Vector2(posX, source.Y + CDGMath.RandomInt(-40, 40)), x =>
+                {
+                    if (CDGMath.RandomPlusMinus() < 0)
+                        x.Sprite.Flip = SpriteEffects.FlipHorizontally;
+
+                    if (CDGMath.RandomPlusMinus() < 0)
+                        x.Sprite.Flip = SpriteEffects.FlipVertically;
+
+                    x.TweenCommands[2].Properties[1] = (invertX ? CDGMath.RandomInt(-100, -50) : CDGMath.RandomInt(50, 100)).ToString();
+                    x.TweenCommands[2].Properties[3] = CDGMath.RandomInt(-100, 100).ToString();
+                });
+        }
+
+        public static void Display(Vector2 position)
+        {
+            for (int i = 0; i < 2; i++)
+                Instance.Run(position, null);
         }
     }
 }

@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using RogueAPI.Abilities;
 using RogueAPI.Classes;
+using RogueAPI.Spells;
+using RogueAPI.States;
 using RogueAPI.Traits;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,8 @@ namespace RogueAPI.Game
         private static List<Rune> runes = new List<Rune>();
         internal static Player instance;
         private static TraitDefinition[] traits = new TraitDefinition[0];
+        private static StateDefinition _state = IdleState.Instance;
+        private static SpellDefinition _spell;
 
         public static Color SkinColor1 = new Color(231, 175, 131, 255);
         public static Color SkinColor2 = new Color(199, 109, 112, 255);
@@ -54,6 +58,36 @@ namespace RogueAPI.Game
 
                 if (_ability != null)
                     _ability.Activate(Instance);
+            }
+        }
+
+        public static StateDefinition State
+        {
+            get { return _state; }
+            set
+            {
+                if (_state != null)
+                    _state.Deactivate(Instance);
+
+                _state = value;
+
+                if (_state != null)
+                    _state.Activate(Instance);
+            }
+        }
+
+        public static SpellDefinition Spell
+        {
+            get { return _spell; }
+            set
+            {
+                if (_spell != null)
+                    _spell.Detach(Instance);
+
+                _spell = value;
+
+                if (_spell != null)
+                    _spell.Attach(Instance);
             }
         }
 

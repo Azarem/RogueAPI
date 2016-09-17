@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace RogueAPI.Effects
 {
-    public class DashEffect : EffectDefinition<bool>
+    public class DashEffect : EffectDefinition
     {
         public static readonly DashEffect Instance = new DashEffect();
 
@@ -19,19 +19,13 @@ namespace RogueAPI.Effects
             AnimationFlag = false;
         }
 
-        protected override SpriteObj CreateSprite(Vector2 position, bool flip)
-        {
-            var sprite = base.CreateSprite(position);
-
-            if (flip)
-                sprite.Flip = SpriteEffects.FlipHorizontally;
-
-            return sprite;
-        }
-
         public static void Display(Vector2 position, bool flip)
         {
-            Instance.Run(position, flip);
+            Instance.Run(position, x =>
+            {
+                if (flip)
+                    x.Sprite.Flip = SpriteEffects.FlipHorizontally;
+            });
         }
     }
 }

@@ -5,3 +5,9 @@ This is a public API for creating mods and plugins for Rogue Legacy. To be used 
 To make a plugin, create a folder called \\Plugins\\(PluginName) in the Rogue Legacy game directory. Change PluginName to whatever you want to call your plugin. A .dll file will be compiled when the launcher starts.
 
 No documentation is available at this time.
+
+To Do:
+
+-Implement spell system with projectile management
+-Add event system for input manegement
+-Connect spells and abilities to input processing

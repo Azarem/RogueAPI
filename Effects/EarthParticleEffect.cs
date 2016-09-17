@@ -19,7 +19,14 @@ namespace RogueAPI.Effects
             set { }
         }
 
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj sprite)
+        protected EarthParticleEffect()
+        {
+            Scale = new Vector2(0.2f);
+            Opacity = 0f;
+            AnimationFlag = true;
+        }
+
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance sprite)
         {
             var rotateBy = CDGMath.RandomInt(10, 45) * CDGMath.RandomPlusMinus();
             var fadeDelay = CDGMath.RandomFloat(0.4f, 0.7f);
@@ -34,17 +41,15 @@ namespace RogueAPI.Effects
             };
         }
 
-        protected EarthParticleEffect()
-        {
-            Scale = new Vector2(0.2f);
-            Opacity = 0f;
-            AnimationFlag = true;
-        }
-
         public static void Display(GameObj source)
         {
             var bounds = source.Bounds;
-            Instance.Run(new Vector2(CDGMath.RandomInt(bounds.Left, bounds.Right), CDGMath.RandomInt(bounds.Top, bounds.Bottom)));
+            Display(new Vector2(CDGMath.RandomInt(bounds.Left, bounds.Right), CDGMath.RandomInt(bounds.Top, bounds.Bottom)));
+        }
+
+        public static void Display(Vector2 position)
+        {
+            Instance.Run(position);
         }
     }
 }

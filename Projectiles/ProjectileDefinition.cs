@@ -3,11 +3,15 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tweener;
+using Tweener.Ease;
 
 namespace RogueAPI.Projectiles
 {
     public class ProjectileDefinition : IDisposable
     {
+        public static Func<ProjectileObj> AllocateProjectile;
+
         public bool IsWeighted;
         public string SpriteName;
         //public GameObj Source;
@@ -35,6 +39,10 @@ namespace RogueAPI.Projectiles
         public bool CanBeFusRohDahed = true;
         public bool IgnoreInvincibleCounter;
         public bool WrapProjectile;
+        public float AltX;
+        public float AltY;
+
+        protected Action<ProjectileObj, bool> DestructionHandler;
 
         //public virtual string SpriteName { get { return spriteName; } set { spriteName = value; } }
         //public virtual Vector2 SourceAnchor { get { return sourceAnchor; } set { sourceAnchor = value; } }
@@ -49,46 +57,46 @@ namespace RogueAPI.Projectiles
         //public virtual Vector2 Scale { get { return scale; } set { scale = value; } }
         //public virtual bool ShowIcon { get { return showIcon; } set { showIcon = value; } }
 
-        public ProjectileDefinition() { }
-
-
-        public ProjectileInstance CreateInstance(GameObj source)
+        public ProjectileDefinition()
         {
-            return new ProjectileInstance(source)
-            {
-                IsWeighted = this.IsWeighted,
-                SpriteName = this.SpriteName,
-                //Source = this.Source,
-                Target = this.Target,
-                SourceAnchor = this.SourceAnchor,
-                AngleOffset = this.AngleOffset,
-                Angle = this.Angle,
-                RotationSpeed = this.RotationSpeed,
-                Damage = this.Damage,
-                Speed = this.Speed,
-                Scale = this.Scale,
-                CollidesWithTerrain = this.CollidesWithTerrain,
-                Lifespan = this.Lifespan,
-                ChaseTarget = this.ChaseTarget,
-                TurnSpeed = this.TurnSpeed,
-                FollowArc = this.FollowArc,
-                StartingRotation = this.StartingRotation,
-                ShowIcon = this.ShowIcon,
-                DestroysWithTerrain = this.DestroysWithTerrain,
-                IsCollidable = this.IsCollidable,
-                DestroysWithEnemy = this.DestroysWithEnemy,
-                LockPosition = this.LockPosition,
-                CollidesWith1Ways = this.CollidesWith1Ways,
-                DestroyOnRoomTransition = this.DestroyOnRoomTransition,
-                CanBeFusRohDahed = this.CanBeFusRohDahed,
-                IgnoreInvincibleCounter = this.IgnoreInvincibleCounter,
-                WrapProjectile = this.WrapProjectile
-            };
+            SpriteName = "BoneProjectile_Sprite";
+            SourceAnchor = Vector2.Zero;
+            Speed = new Vector2(0f, 0f);
+            IsWeighted = false;
+            RotationSpeed = 0f;
+            Damage = 0;
+            AngleOffset = 0f;
+            CollidesWithTerrain = false;
+            Scale = Vector2.One;
+            ShowIcon = false;
+            DestructionHandler = Destroy.Explosion;
         }
 
-        public ProjectileObj Fire(GameObj source, GameObj target = null)
+        protected ProjectileObj Fire(GameObj source, GameObj target = null, Action<ProjectileObj> postInit = null)
         {
-            return Core.FireProjectile(this, source, target);
+            if (source == null)
+                throw new InvalidOperationException("Projectile must have a source");
+
+            var projectile = AllocateProjectile();
+            projectile.Initialize(this, source, target);
+            postInit?.Invoke(projectile);
+            Initialize(projectile);
+
+            return projectile;
+        }
+
+        public virtual void Initialize(ProjectileObj projectile)
+        {
+            projectile.Prepare();
+        }
+
+        public virtual void Update(ProjectileObj proj, GameTime gameTime)
+        {
+        }
+
+        public virtual void OnDestroy(ProjectileObj proj, bool hitPlayer)
+        {
+            DestructionHandler?.Invoke(proj, hitPlayer);
         }
 
 
@@ -96,6 +104,70 @@ namespace RogueAPI.Projectiles
         {
             //Source = null;
             Target = null;
+        }
+
+        protected static class Destroy
+        {
+            public static void Explosion(ProjectileObj proj, bool hitPlayer)
+            {
+                string newSprite = proj.SpriteName.Replace("_", "Explosion_");
+                proj.ChangeSprite(newSprite);
+                proj.AnimationDelay = 0.0333333351f;
+                proj.PlayAnimation(false);
+                proj.IsWeighted = false;
+                proj.IsCollidable = false;
+
+                if (newSprite != "EnemySpearKnightWaveExplosion_Sprite" && newSprite != "WizardIceProjectileExplosion_Sprite")
+                    proj.Rotation = 0f;
+
+                Tween.RunFunction(0.5f, proj, "KillProjectile");
+            }
+
+            public static void Kill(ProjectileObj proj, bool hitPlayer)
+            {
+                proj.KillProjectile();
+            }
+
+            public static void FadeOutOffset(ProjectileObj proj, bool hitPlayer)
+            {
+                Tween.StopAllContaining(proj, false);
+                proj.IsCollidable = false;
+                Tween.By(proj, 0.3f, Linear.EaseNone, "X", CDGMath.RandomInt(-50, 50).ToString(), "Y", CDGMath.RandomInt(-100, 100).ToString());
+                Tween.To(proj, 0.3f, Linear.EaseNone, "Opacity", "0");
+                Tween.AddEndHandlerToLastTween(proj, "KillProjectile");
+            }
+
+            public static void PlayerDeflect(ProjectileObj proj, bool hitPlayer)
+            {
+                if (hitPlayer)
+                {
+                    Tween.By(proj, 0.3f, Linear.EaseNone, "X", CDGMath.RandomInt(-50, 50).ToString(), "Y", CDGMath.RandomInt(-100, -50).ToString(), "Rotation", "270");
+                    Tween.To(proj, 0.3f, Linear.EaseNone, "Opacity", "0");
+                }
+                else
+                {
+                    proj.IsWeighted = false;
+                    proj.IsCollidable = false;
+                    Tween.To(proj, 0.3f, Linear.EaseNone, "delay", "0.3", "Opacity", "0");
+                }
+
+                Tween.AddEndHandlerToLastTween(proj, "KillProjectile");
+            }
+
+            public static void StopFadeOut(ProjectileObj proj, bool hitPlayer)
+            {
+                proj.IsCollidable = false;
+                proj.AccelerationX = 0f;
+                proj.AccelerationY = 0f;
+                Tween.To(proj, 0.3f, Tween.EaseNone, "Opacity", "0");
+                Tween.AddEndHandlerToLastTween(proj, "KillProjectile");
+            }
+
+            public static void FadeOut(ProjectileObj proj, bool hitPlayer)
+            {
+                Tween.To(proj, 0.2f, Tween.EaseNone, "Opacity", "0");
+                Tween.AddEndHandlerToLastTween(proj, "KillProjectile");
+            }
         }
     }
 }

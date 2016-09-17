@@ -28,11 +28,13 @@ namespace RogueAPI.Traits
             base.Activate(player);
             Game.Player.PlayerEffectsUpdating += Player_PlayerEffectsUpdating;
             Event<ProjectileFireEvent>.Handler += ProjectileFired;
+            Event<EffectDisplayEvent>.Handler += EffectDisplayed;
             questionTimer = 0.5f;
         }
 
         protected internal override void Deactivate(Player player)
         {
+            Event<EffectDisplayEvent>.Handler -= EffectDisplayed;
             Event<ProjectileFireEvent>.Handler -= ProjectileFired;
             Game.Player.PlayerEffectsUpdating -= Player_PlayerEffectsUpdating;
             base.Deactivate(player);
@@ -47,13 +49,16 @@ namespace RogueAPI.Traits
                 if (questionTimer <= 0f)
                 {
                     questionTimer = 0.4f;
-                    Effects.QuestionMarkEffect.Display(new Vector2(player.X, player.Bounds.Top));
+                    Effects.QuestionMarkEffect.Display(player);
                 }
             }
         }
 
         private void ProjectileFired(ProjectileFireEvent args)
         {
+            if (args.ProjectileDefinition is Projectiles.ChakramProjectile)
+                args.Projectile.AltX = -args.Projectile.AltX;
+
             if (args.Sender == Game.Player.Instance.GameObject)
             {
                 var proj = args.Projectile;
@@ -62,6 +67,14 @@ namespace RogueAPI.Traits
                     proj.Flip = args.Sender.Flip != SpriteEffects.FlipHorizontally
                         ? SpriteEffects.FlipHorizontally
                         : SpriteEffects.None;
+            }
+        }
+
+        private void EffectDisplayed(EffectDisplayEvent args)
+        {
+            if (args.Effect is Effects.SpellCastEffect && args.Sprite.CanBeRotated)
+            {
+                args.Sprite.Rotation = -args.Sprite.Rotation;
             }
         }
 

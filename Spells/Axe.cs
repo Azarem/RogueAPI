@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
+using RogueAPI.Game;
+using RogueAPI.Projectiles;
 
 namespace RogueAPI.Spells
 {
@@ -11,22 +9,28 @@ namespace RogueAPI.Spells
         public const byte Id = 2;
         public static readonly Axe Instance = new Axe();
 
-        private Axe()
-            : this(Id)
-        {
-            DisplayName = "Dagger";
-            Icon = "DaggerIcon_Sprite";
-            Description = string.Format("[Input:{0}]  Fires a dagger directly in front of you.", (int)Game.InputKeys.PlayerSpell1);
-        }
+        private Axe() : this(Id) { }
 
         protected Axe(byte id)
             : base(id)
         {
-            MiscValue1 = 0f;
-            MiscValue2 = 0f;
-            Rarity = 1;
-            ManaCost = 10;
-            DamageMultiplier = 1.0f;
+            displayName = "Axe";
+            icon = "AxeIcon_Sprite";
+            description = string.Format("[Input:{0}]  Throws a giant axe in an arc.", (int)Game.InputKeys.PlayerSpell1);
+            soundList = new[] { "Cast_Axe" };
+            
+            rarity = 1;
+            manaCost = 15;
+            damageMultiplier = 1.0f;
+        }
+
+        protected override bool OnCast(Entity source)
+        {
+            var proj = AxeProjectile.Fire(source.GameObject);
+
+            Effects.SpellCastEffect.Display(proj.Position, proj.Rotation, true);
+
+            return true;
         }
     }
 }

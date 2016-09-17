@@ -14,7 +14,7 @@ namespace RogueAPI.Effects
     {
         public static readonly CriticalTextEffect Instance = new CriticalTextEffect();
 
-        private static readonly IEnumerable<TweenCommand> _defaultCommands = new TweenCommand[] {
+        private static readonly IList<TweenCommand> _defaultCommands = new TweenCommand[] {
             new TweenCommand(false, 0.2f, Back.EaseOutLarge, "ScaleX", "1", "ScaleY", "1"),
             new TweenCommand(false, 0.2f, Tween.EaseNone, "delay", "0.5", "Opacity", "0") { EndHandler = new TweenEndHandler("StopAnimation") }
         };
@@ -32,16 +32,16 @@ namespace RogueAPI.Effects
             AnimationFlag = true;
         }
 
-        protected override SpriteObj CreateSprite(Vector2 position)
+        protected override EffectSpriteInstance CreateSprite(Vector2 position)
         {
             var sprite = base.CreateSprite(position);
 
-            sprite.Position = CDGMath.GetCirclePosition(sprite.Rotation - 90f, 20f, position);
+            sprite.Position = CDGMath.GetCirclePosition(sprite.Rotation - 90f, 20f, sprite.Position);
 
             return sprite;
         }
 
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
         {
             return _defaultCommands;
         }

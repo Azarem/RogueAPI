@@ -62,17 +62,8 @@ namespace RogueAPI.Abilities
 
         protected override void Activated(GameObj player)
         {
-            var proj = Projectile.Fire(player);
-
-            proj.Opacity = 0f;
-            proj.CollisionTypeTag = 2;
-            proj.Spell = 20;
-            proj.IgnoreBoundsCheck = true;
-            Tween.To(proj, 0.2f, new Easing(Tween.EaseNone), "ScaleX", "100", "ScaleY", "50");
-            Tween.AddEndHandlerToLastTween(proj, "KillProjectile");
-            SoundManager.PlaySound("Cast_FasRoDus");
-
-            Effects.FusRoDahTextEffect.Display(new Vector2(player.X, player.Bounds.Top));
+            ShoutProjectile.Fire(player);
+            Effects.FusRoDahTextEffect.Display(player);
 
             Magnitude = 0;
             Tween.To(this, 1f, new Easing(Tween.EaseNone), "Magnitude", "3");

@@ -30,8 +30,14 @@ namespace RogueAPI
         public static Func<byte, Enemies.EnemyDifficulty, PhysicsObjContainer> CreateEnemy;
         public static Action<PhysicsObjContainer> AttachEnemyToCurrentRoom;
         //public static Action<EffectType, GameObj, Vector2?> AttachEffect;
-        public static Func<ProjectileDefinition, GameObj, GameObj, ProjectileObj> FireProjectile;
+        //public static Func<ProjectileDefinition, GameObj, GameObj, ProjectileObj> FireProjectile;
         public static Func<IEnumerable<BlankObj>> GetCurrentRoomTerrainObjects;
+        public static Action<PhysicsObj> AttachPhysicsObject;
+        public static Func<int> ActiveEnemyCount;
+        public static Func<bool, IEnumerable<PhysicsObjContainer>> GetEnemyList;
+        public static Func<bool, IEnumerable<PhysicsObjContainer>> GetTempEnemyList;
+        public static Func<IEnumerable<ProjectileObj>> GetActiveProjectiles;
+        public static Action<int, string, Color, Vector2> DisplayNumberString;
 
         //public static event Action<string, Screen, PhysicsObjContainer, object> ScreenEntered;
         //public static event Action<string, Screen, PhysicsObjContainer, object> ScreenExited;
@@ -64,6 +70,11 @@ namespace RogueAPI
                 newArr[ix] = list[ix];
 
             return newArr;
+        }
+
+        public static bool IsPlayer(this GameObj obj)
+        {
+            return obj == Game.Player.Instance.GameObject;
         }
 
         //public static void OnScreenEntered(string type, Screen screen, PhysicsObjContainer player, object args)

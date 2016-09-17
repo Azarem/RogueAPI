@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RogueAPI.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,12 +13,22 @@ namespace RogueAPI.States
 
         protected byte _stateId;
 
-        public StateDefinition(byte stateId)
+        protected StateDefinition(byte stateId)
         {
             _stateId = stateId;
 
             Lookup[stateId] = this;
         }
 
+
+        public virtual void Activate(Player player)
+        {
+
+        }
+
+        public virtual void Deactivate(Player player)
+        {
+
+        }
     }
 }

@@ -1,32 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
 
 namespace RogueAPI.Spells
 {
-    public class DragonFireNeo : SpellDefinition
+    public class DragonFireNeo : DragonFire
     {
-        public const byte Id = 15;
-        public static readonly DragonFireNeo Instance = new DragonFireNeo();
+        new public const byte Id = 15;
+        new public static readonly DragonFireNeo Instance = new DragonFireNeo();
 
-        private DragonFireNeo()
-            : this(Id)
-        {
-            DisplayName = "Dagger";
-            Icon = "DaggerIcon_Sprite";
-            Description = string.Format("[Input:{0}]  Fires a dagger directly in front of you.", (int)Game.InputKeys.PlayerSpell1);
-        }
+        private DragonFireNeo() : this(Id) { }
 
         protected DragonFireNeo(byte id)
             : base(id)
         {
-            MiscValue1 = 0f;
-            MiscValue2 = 0f;
-            Rarity = 1;
-            ManaCost = 10;
-            DamageMultiplier = 1.0f;
+            baseProjectile.Speed = new Vector2(1750f, 1750f);
+            baseProjectile.Lifespan = 0.75f;
+            baseProjectile.Scale = new Vector2(2.75f, 2.75f);
+            baseProjectile.WrapProjectile = true;
+            miscValue1 = 0.75f;
+            manaCost = 0;
         }
     }
 }

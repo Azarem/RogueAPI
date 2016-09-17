@@ -35,7 +35,7 @@ namespace RogueAPI.Effects
             AnimationFlag = true;
         }
 
-        protected override IEnumerable<TweenCommand> GetTweenCommands(SpriteObj obj)
+        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
         {
             TweenCommand offset;
             var tweens = _defaultCommands.Copy();
