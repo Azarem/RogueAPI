@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RogueAPI.Game;
+using RogueAPI.Projectiles;
 
 namespace RogueAPI.Spells
 {
@@ -21,21 +23,21 @@ namespace RogueAPI.Spells
             icon = "DualBladesIcon_Sprite";
             description = string.Format("[Input:{0}]  Send Scythes flying out from above you.", (int)Game.InputKeys.PlayerSpell1);
             soundList = new[] { "Cast_Chakram" };
-            baseProjectile.SpriteName = "SpellDualBlades_Sprite";
-            baseProjectile.Angle = new Vector2(-55f, -55f);
-            baseProjectile.SourceAnchor = new Vector2(50f, 30f);
-            baseProjectile.Speed = new Vector2(1000f, 1000f);
-            baseProjectile.IsWeighted = false;
-            baseProjectile.RotationSpeed = 30f;
-            baseProjectile.CollidesWithTerrain = false;
-            baseProjectile.DestroysWithTerrain = false;
-            baseProjectile.DestroysWithEnemy = false;
-            baseProjectile.Scale = new Vector2(2f, 2f);
-            miscValue1 = 0f;
-            miscValue2 = 0f;
+
             rarity = 1;
             manaCost = 15;
             damageMultiplier = 1.0f;
+        }
+
+        protected override bool OnCast(Entity source)
+        {
+            var proj = ScytheProjectile.Fire(source.GameObject);
+            Effects.SpellCastEffect.Display(proj.Position, proj.Rotation, true);
+
+            proj = ScytheProjectile.Fire(source.GameObject, true);
+            Effects.SpellCastEffect.Display(proj.Position, proj.Rotation, true);
+
+            return true;
         }
     }
 }

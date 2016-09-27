@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using DS2DEngine;
-using Tweener;
 using Tweener.Ease;
 
 namespace RogueAPI.Effects
@@ -19,28 +14,15 @@ namespace RogueAPI.Effects
             new TweenCommand(false, 0.2f, Linear.EaseNone, "Opacity", "1") { EndHandler = new TweenEndHandler("StopAnimation") }
         };
 
-        public override Vector2 Scale
-        {
-            get { return new Vector2(CDGMath.RandomFloat(0.2f, 0.5f)); }
-            set { }
-        }
-
-        public override float Rotation
-        {
-            get { return CDGMath.RandomInt(0, 90); }
-            set { }
-        }
+        public override Vector2 Scale { get { return new Vector2(CDGMath.RandomFloat(0.2f, 0.5f)); } }
+        public override float Rotation { get { return CDGMath.RandomInt(0, 90); } }
+        protected override IList<TweenCommand> TweenCommands { get { return _defaultCommands; } }
 
         private ChestSparkleEffect()
         {
-            SpriteName = "LevelUpParticleFX_Sprite";
-            Opacity = 0f;
-            AnimationFlag = false;
-        }
-
-        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
-        {
-            return _defaultCommands;
+            _spriteName = "LevelUpParticleFX_Sprite";
+            _opacity = 0f;
+            _animateFlag = false;
         }
 
         public static void Display(Vector2 position)

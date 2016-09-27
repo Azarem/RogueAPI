@@ -1,10 +1,8 @@
 ﻿using DS2DEngine;
 using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Tweener;
 using Tweener.Ease;
 
 namespace RogueAPI.Effects
@@ -12,48 +10,78 @@ namespace RogueAPI.Effects
     public class DustEffect : EffectDefinition
     {
         public static readonly DustEffect Instance = new DustEffect();
-        private const int OffsetRange = 30;
+
         private static readonly TweenCommand[] _defaultCommands = new TweenCommand[] {
             new TweenCommand(false, 0.2f, Linear.EaseNone, "Opacity", "1"),
-            new TweenCommand(false, 0.5f, Linear.EaseNone, "delay", "0.2", "Opacity", "0") { InitialValues = new [] { 1f } },
             new TweenCommand(true, 0.7f, Linear.EaseNone, "Rotation", "180"),
-            new TweenCommand(true, 0.7f, Quad.EaseOut, "X", "0", "Y", "0") { EndHandler = new TweenEndHandler("StopAnimation") }
+            new TweenCommand(true, 0.7f, Quad.EaseOut, "X", "0", "Y", "0"),
+            new TweenCommand(false, 0.5f, Linear.EaseNone, "delay", "0.2", "Opacity", "0") { InitialValues = new [] { 1f }, EndHandler = new TweenEndHandler("StopAnimation") },
         };
 
 
-        public override float Rotation
-        {
-            get { return CDGMath.RandomInt(0, 270); }
-            set { }
-        }
+        public override float Rotation { get { return CDGMath.RandomInt(0, 270); } }
+        protected override IList<TweenCommand> TweenCommands { get { return _defaultCommands; } }
 
         protected DustEffect()
         {
-            SpriteName = "ExplosionBrown_Sprite";
-            Opacity = 0;
-            Scale = new Vector2(0.8f);
-            AnimationFlag = true;
+            _spriteName = "ExplosionBrown_Sprite";
+            _opacity = 0;
+            _scale = new Vector2(0.8f);
+            _animateFlag = true;
         }
 
-        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
+        public static void DisplayFart(GameObj source)
         {
-            TweenCommand offset;
-            var tweens = _defaultCommands.Copy();
-            tweens[3] = offset = tweens[3].Clone();
-
-            offset.Properties[1] = CDGMath.RandomInt(-OffsetRange, OffsetRange).ToString();
-            offset.Properties[3] = CDGMath.RandomInt(-OffsetRange, OffsetRange).ToString();
-
-            return tweens;
+            Display(source, true);
         }
 
-        public static void Display(GameObj source)
+        public static void Display(GameObj source, bool useFlip = false)
         {
-            Display(new Vector2(source.X, source.Bounds.Bottom));
+            Display(new Vector2(source.X, source.Bounds.Bottom), useFlip ? source.Flip == SpriteEffects.FlipHorizontally : (bool?)null);
         }
         public static void Display(Vector2 position)
         {
-            Instance.Run(position);
+            Display(position, null);
         }
+
+        public static void Display(Vector2 position, bool? flip = null)
+        {
+            lock (_defaultCommands)
+                Instance.Run(position, x =>
+                {
+                    float xDrift, yDrift;
+
+                    if (flip != null)
+                    {
+                        if (flip.Value)
+                        {
+                            x.Sprite.X += 30f;
+                            xDrift = 20f;
+                        }
+                        else
+                        {
+                            x.Sprite.X -= 30f;
+                            xDrift = -20f;
+                        }
+
+                        yDrift = 0f;
+                    }
+                    else
+                    {
+                        xDrift = CDGMath.RandomInt(-30, 30);
+                        yDrift = CDGMath.RandomInt(-30, 30);
+                    }
+
+                    x.TweenCommands[0].Properties[1] = "1";
+                    x.TweenCommands[3].InitialValues[0] = 1f;
+
+                    var cmd = x.TweenCommands[2];
+
+
+                    cmd.Properties[1] = xDrift.ToString();
+                    cmd.Properties[3] = yDrift.ToString();
+                });
+        }
+
     }
 }

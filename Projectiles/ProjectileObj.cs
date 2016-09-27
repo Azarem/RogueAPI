@@ -11,7 +11,7 @@ namespace RogueAPI.Projectiles
     {
         public ProjectileObj(string spriteName) : base(spriteName) { }
 
-        private float m_elapsedLifeSpan;
+        internal float m_elapsedLifeSpan;
         private Color m_blinkColour = Color.White;
         private float m_blinkTimer;
 
@@ -23,7 +23,7 @@ namespace RogueAPI.Projectiles
         public bool ChaseTarget { get; set; }
         public bool CollidesWith1Ways { get; set; }
         public bool CollidesWithTerrain { get; set; }
-        public float LifeSpan { get; set; }
+        public float LifeSpan;
         public GameObj Source { get; set; }
         public GameObj Target { get; set; }
         public bool DestroysWithTerrain { get; set; }
@@ -274,25 +274,6 @@ namespace RogueAPI.Projectiles
 
             float totalSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            //switch (Spell)
-            //{
-
-
-            //    case SpellType.Laser:
-
-            //        if (AltX > 0f)
-            //        {
-            //            AltX -= totalSeconds;
-            //            Opacity = 0.9f - AltX;
-            //            ScaleY = 1f - AltX;
-
-            //            if (AltX <= 0f)
-            //                ActivateEffect();
-            //        }
-            //        break;
-
-            //}
-
             if (ChaseTarget && Target != null)
             {
                 TurnToFace(Target.Position, TurnSpeed, totalSeconds);
@@ -328,6 +309,18 @@ namespace RogueAPI.Projectiles
             IsAlive = false;
             IsDying = false;
         }
+
+        public bool OnCollision(PhysicsObjContainer target, bool targetIsPlayer, Vector2 knockbackAmount)
+        {
+            if (Definition != null)
+                return Definition.OnCollision(this, target, targetIsPlayer, knockbackAmount);
+            return true;
+        }
+
+        //public override void CollisionResponse(CollisionBox thisBox, CollisionBox otherBox, int collisionResponseType)
+        //{
+        //    base.CollisionResponse(thisBox, otherBox, collisionResponseType);
+        //}
 
         public void RunDestroyAnimation(bool hitPlayer)
         {
@@ -411,12 +404,12 @@ namespace RogueAPI.Projectiles
                 //        Tween.AddEndHandlerToLastTween(this, "KillProjectile");
                 //        break;
 
-                    //case "SpellNuke_Sprite":
-                    //    ProceduralLevelScreen proceduralLevelScreen = Game.ScreenManager.CurrentScreen as ProceduralLevelScreen;
-                    //    if (proceduralLevelScreen != null)
-                    //        proceduralLevelScreen.ImpactEffectPool.CrowDestructionEffect(Position);
-                    //    KillProjectile();
-                    //    break;
+                //case "SpellNuke_Sprite":
+                //    ProceduralLevelScreen proceduralLevelScreen = Game.ScreenManager.CurrentScreen as ProceduralLevelScreen;
+                //    if (proceduralLevelScreen != null)
+                //        proceduralLevelScreen.ImpactEffectPool.CrowDestructionEffect(Position);
+                //    KillProjectile();
+                //    break;
 
                 //    case "EnemyFlailKnightBall_Sprite":
                 //    case "WizardIceSpell_Sprite":

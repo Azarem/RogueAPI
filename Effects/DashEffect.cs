@@ -1,10 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DS2DEngine;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace RogueAPI.Effects
@@ -15,8 +9,8 @@ namespace RogueAPI.Effects
 
         protected DashEffect()
         {
-            SpriteName = "DashFX_Sprite";
-            AnimationFlag = false;
+            _spriteName = "DashFX_Sprite";
+            _animateFlag = false;
         }
 
         public static void Display(Vector2 position, bool flip)

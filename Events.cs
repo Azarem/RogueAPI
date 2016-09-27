@@ -86,12 +86,57 @@ namespace RogueAPI
         }
     }
 
+    public class EnemyHitEventArgs : IEventArgs
+    {
+        public readonly PhysicsObjContainer Enemy;
+        public readonly int Damage;
+        public readonly bool WasPlayer;
+        public float KnockbackForce { get; set; }
+
+        public EnemyHitEventArgs(PhysicsObjContainer enemy, int damage, bool wasPlayer, float knockbackForce)
+        {
+            Enemy = enemy;
+            Damage = damage;
+            WasPlayer = wasPlayer;
+            KnockbackForce = knockbackForce;
+        }
+    }
+
+    //public class EnemyCollisionEvent : IEventArgs
+    //{
+    //    public readonly PhysicsObjContainer Enemy;
+    //    public readonly IPhysicsObj Source;
+    //    public int Damage { get; set; }
+    //    public bool Handled { get; set; }
+
+    //    public EnemyCollisionEvent(PhysicsObjContainer enemy, IPhysicsObj source, int damage)
+    //    {
+    //        Enemy = enemy;
+    //        Source = source;
+    //        Damage = damage;
+    //    }
+    //}
+
     public class MapExitEventArgs : EventArgs<Screen>
     {
         public MapExitEventArgs(Screen sender)
             : base(sender)
         {
 
+        }
+    }
+
+    public class PlayerDrawEventArgs : IEventArgs
+    {
+        public readonly GameObj Player;
+        public readonly Camera2D Camera;
+        public bool IsPreDraw { get; set; }
+
+        public PlayerDrawEventArgs(GameObj player, Camera2D camera, bool isPreDraw)
+        {
+            Player = player;
+            Camera = camera;
+            IsPreDraw = isPreDraw;
         }
     }
 

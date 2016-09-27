@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using DS2DEngine;
 using Tweener.Ease;
@@ -19,17 +15,14 @@ namespace RogueAPI.Effects
             new TweenCommand(false, 0.2f, Tween.EaseNone, "delay", "0.5", "Opacity", "0") { EndHandler = new TweenEndHandler("StopAnimation") }
         };
 
-        public override float Rotation
-        {
-            get { return CDGMath.RandomInt(-20, 20); }
-            set { }
-        }
+        public override float Rotation { get { return CDGMath.RandomInt(-20, 20); } }
+        protected override IList<TweenCommand> TweenCommands { get { return _defaultCommands; } }
 
         protected CriticalTextEffect()
         {
-            SpriteName = "CriticalText_Sprite";
-            Scale = Vector2.Zero;
-            AnimationFlag = true;
+            _spriteName = "CriticalText_Sprite";
+            _scale = Vector2.Zero;
+            _animateFlag = true;
         }
 
         protected override EffectSpriteInstance CreateSprite(Vector2 position)
@@ -41,9 +34,9 @@ namespace RogueAPI.Effects
             return sprite;
         }
 
-        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
+        public static void Display(GameObj source)
         {
-            return _defaultCommands;
+            Display(new Vector2(source.X, source.Bounds.Top));
         }
 
         public static void Display(Vector2 position)

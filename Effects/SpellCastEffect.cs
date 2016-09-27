@@ -1,10 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DS2DEngine;
 
 namespace RogueAPI.Effects
 {
@@ -14,14 +8,15 @@ namespace RogueAPI.Effects
 
         protected SpellCastEffect()
         {
-            SpriteName = "SpellPortal_Sprite";
-            Scale = new Vector2(2f);
-            OutlineWidth = 2;
-            AnimationFlag = false;
+            _spriteName = "SpellPortal_Sprite";
+            _scale = new Vector2(2f);
+            _outlineWidth = 2;
+            _animateFlag = false;
         }
 
         public static void Display(Vector2 position, float angle, bool canRotate = false)
         {
+            //Should add support for 'boss' version where angle is inverted based on obj flip
             Instance.Run(position, x =>
             {
                 x.Sprite.Rotation = angle;

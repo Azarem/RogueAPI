@@ -99,6 +99,10 @@ namespace RogueAPI.Projectiles
             DestructionHandler?.Invoke(proj, hitPlayer);
         }
 
+        public virtual bool OnCollision(ProjectileObj proj, PhysicsObjContainer target, bool targetIsPlayer, Vector2 knockbackAmount)
+        {
+            return true;
+        }
 
         public virtual void Dispose()
         {

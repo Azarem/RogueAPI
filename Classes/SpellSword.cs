@@ -41,11 +41,13 @@ namespace RogueAPI.Classes
         {
             base.Activate(player);
             Player.PlayerEffectsUpdating += PlayerEffectsUpdating;
+            Event<EnemyHitEventArgs>.Handler += EnemyHitHandler;
             _sparkleTimer = 0.2f;
         }
 
         protected internal override void Deactivate(Player player)
         {
+            Event<EnemyHitEventArgs>.Handler -= EnemyHitHandler;
             Player.PlayerEffectsUpdating -= PlayerEffectsUpdating;
             base.Deactivate(player);
         }
@@ -58,6 +60,20 @@ namespace RogueAPI.Classes
                 _sparkleTimer = 0.2f;
                 Effects.ChestSparkleEffect.Display(player.Position);
                 Effects.ChestSparkleEffect.Display(player.Position);
+            }
+        }
+
+        private void EnemyHitHandler(EnemyHitEventArgs args)
+        {
+            if (args.WasPlayer)
+            {
+                var manaGain = (int)(args.Damage * 0.3f);
+                var manaStat = Player.Instance.GetStatObject(Stats.ManaStat.Id);
+
+                manaStat.CurrentValue += manaGain;
+
+                var player = Player.Instance.GameObject;
+                Core.DisplayNumberString(manaGain, "mp", Color.RoyalBlue, new Vector2(player.X, player.Bounds.Top - 30));
             }
         }
     }

@@ -42,12 +42,13 @@ namespace RogueAPI.Spells
             return true;
         }
 
-        protected override void OnDeactivate()
+        protected override void OnDeactivate(bool force)
         {
-            base.OnDeactivate();
 
             SoundManager.PlaySound("Cast_TimeStop");
             SoundManager.ResumeMusic();
+
+            base.OnDeactivate(force);
 
             //Tween.To(m_traitAura, 0.2f, Tween.EaseNone, "ScaleX", "0", "ScaleY", "0");
             //Tween.AddEndHandlerToLastTween(this, "UnpauseAllEnemies");

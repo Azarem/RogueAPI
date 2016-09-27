@@ -27,9 +27,7 @@ namespace RogueAPI.Spells
         protected override bool OnCast(Entity source)
         {
             var proj = DaggerProjectile.Fire(source.GameObject);
-
             Effects.SpellCastEffect.Display(proj.Position, proj.Rotation, true);
-
             return true;
         }
     }

@@ -151,6 +151,10 @@ namespace RogueAPI.Game
                 PlayerStyleUpdating(player, animationType);
         }
 
+        public static void StopAllSpellsAndAbilities()
+        {
+            Spell?.Deactivate(true);
+        }
 
 
         public class SkinShaderArgs

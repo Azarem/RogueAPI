@@ -37,7 +37,7 @@ namespace RogueAPI.Game
                 def = _statArray[statId];
 
             if (def == null)
-                _statArray[statId] = (StatDefinition)Activator.CreateInstance(StatDefinition.All[statId]);
+                _statArray[statId] = def = (StatDefinition)Activator.CreateInstance(StatDefinition.All[statId]);
 
             return def;
         }

@@ -1,10 +1,6 @@
 ﻿using DS2DEngine;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tweener.Ease;
 
 namespace RogueAPI.Effects
@@ -12,43 +8,52 @@ namespace RogueAPI.Effects
     public class DeathEffect : EffectDefinition
     {
         public static readonly DeathEffect Instance = new DeathEffect();
-        private const int OffsetRange = 50;
 
-        public override Vector2 Scale
-        {
-            get { return new Vector2(CDGMath.RandomFloat(0.7f, 0.8f)); }
-            set { }
-        }
+        protected static readonly TweenCommand[] _defaultTweens = new[] {
+            new TweenCommand(false, 0f, Back.EaseIn, "ScaleX", "0", "ScaleY", "0"),
+            new TweenCommand(true, 0f, Quad.EaseOut,  "X", "0", "Y", "0"),
+            new TweenCommand(true, 0.1f, Quad.EaseOut, "Rotation", "0"),
+            new TweenCommand(false, 0.2f, Linear.EaseNone, "delay", "0.2", "Opacity", "0") { EndHandler = new TweenEndHandler("StopAnimation") }
+        };
 
-        public override float Rotation
-        {
-            get { return CDGMath.RandomInt(0, 90); }
-            set { }
-        }
+        public override Vector2 Scale { get { return new Vector2(CDGMath.RandomFloat(0.7f, 0.8f)); } }
+        public override float Rotation { get { return CDGMath.RandomInt(0, 90); } }
+        protected override IList<TweenCommand> TweenCommands { get { return _defaultTweens; } }
 
         protected DeathEffect()
         {
-            SpriteName = "ExplosionBlue_Sprite";
-            AnimationFlag = true;
+            _spriteName = "ExplosionBlue_Sprite";
+            _animateFlag = true;
         }
 
-        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance obj)
+        protected static void Initialize(EffectDisplayEvent evt)
         {
-            var duration = CDGMath.RandomFloat(0.5f, 1f);
-            var scale = CDGMath.RandomFloat(0f, 0.1f);
+            float duration = CDGMath.RandomFloat(0.5f, 1f);
+            float scaleTo = CDGMath.RandomFloat(0f, 0.1f);
 
-            return new TweenCommand[] {
-                new TweenCommand(false, duration - 0.2f, Linear.EaseNone, "delay", "0.2", "Opacity", "0"),
-                new TweenCommand(true, duration - 0.1f, Quad.EaseOut, "Rotation", CDGMath.RandomInt(145, 190).ToString()),
-                new TweenCommand(false, duration, Back.EaseIn, "ScaleX", scale.ToString(), "ScaleY", scale.ToString()),
-                new TweenCommand(true, duration, Quad.EaseOut,  "X", CDGMath.RandomInt(-OffsetRange, OffsetRange).ToString(), "Y", CDGMath.RandomInt(-OffsetRange, OffsetRange).ToString()) { EndHandler = new TweenEndHandler("StopAnimation") }
-            };
+            var cmd = _defaultTweens[0];
+            cmd.Duration = duration;
+            cmd.Properties[1] = scaleTo.ToString();
+            cmd.Properties[3] = scaleTo.ToString();
+
+            cmd = _defaultTweens[1];
+            cmd.Duration = duration;
+            cmd.Properties[1] = CDGMath.RandomInt(-50, 50).ToString();
+            cmd.Properties[3] = CDGMath.RandomInt(-50, 50).ToString();
+
+            cmd = _defaultTweens[2];
+            cmd.Duration = duration - 0.1f;
+            cmd.Properties[1] = CDGMath.RandomInt(145, 190).ToString();
+
+            cmd = _defaultTweens[3];
+            cmd.Duration = duration - 0.2f;
         }
 
-        public static void Display(Vector2 position)
+        public static void Display(Vector2 position, int numEffects = 10)
         {
-            for (int i = 0; i < 10; i++)
-                Instance.Run(position);
+            lock (_defaultTweens)
+                for (int i = 0; i < numEffects; i++)
+                    Instance.Run(position, Initialize);
         }
     }
 }

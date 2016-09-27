@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueAPI.Effects
 {
@@ -13,8 +8,8 @@ namespace RogueAPI.Effects
 
         protected DoubleJumpEffect()
         {
-            SpriteName = "DoubleJumpFX_Sprite";
-            AnimationFlag = false;
+            _spriteName = "DoubleJumpFX_Sprite";
+            _animateFlag = false;
         }
 
         public static void Display(Vector2 position)

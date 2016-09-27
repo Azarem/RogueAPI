@@ -1,10 +1,6 @@
 ﻿using DS2DEngine;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tweener;
 
 namespace RogueAPI.Effects
@@ -13,32 +9,22 @@ namespace RogueAPI.Effects
     {
         public static readonly EarthParticleEffect Instance = new EarthParticleEffect();
 
-        public override string SpriteName
-        {
-            get { return "Blossom" + CDGMath.RandomInt(1, 4) + "_Sprite"; }
-            set { }
-        }
+        protected static readonly TweenCommand[] _defaultCommands = new[] {
+            new TweenCommand(false, 0.1f, Tween.EaseNone, "Opacity", "1"),
+            new TweenCommand(true, 0.2f, Tween.EaseNone, "Y", "0"),
+            new TweenCommand(false, 0.9f, Tween.EaseNone, "ScaleX", "0.7", "ScaleY", "0.7"),
+            new TweenCommand(true, 0.9f, Tween.EaseNone, "Rotation", "0"),
+            new TweenCommand(false, 0.2f, Tween.EaseNone, "delay", "0", "Opacity", "0") { InitialValues = new [] { 1f }, EndHandler = new TweenEndHandler("StopAnimation") }, //Quick fade-out after delay
+        };
+
+        public override string SpriteName { get { return "Blossom" + CDGMath.RandomInt(1, 4) + "_Sprite"; } }
+        protected override IList<TweenCommand> TweenCommands { get { return _defaultCommands; } }
 
         protected EarthParticleEffect()
         {
-            Scale = new Vector2(0.2f);
-            Opacity = 0f;
-            AnimationFlag = true;
-        }
-
-        protected override IList<TweenCommand> GetTweenCommands(EffectSpriteInstance sprite)
-        {
-            var rotateBy = CDGMath.RandomInt(10, 45) * CDGMath.RandomPlusMinus();
-            var fadeDelay = CDGMath.RandomFloat(0.4f, 0.7f);
-            var offsetY = CDGMath.RandomInt(5, 20);
-
-            return new TweenCommand[] {
-                new TweenCommand(false, 0.1f, Tween.EaseNone, "Opacity", "1"), //Quick fade-in
-                new TweenCommand(false, 0.2f, Tween.EaseNone, "delay", fadeDelay.ToString(), "Opacity", "0") { InitialValues = new [] { 1f } }, //Quick fade-out after delay
-                new TweenCommand(true, 0.2f + fadeDelay, Tween.EaseNone, "Y", offsetY.ToString()), //Offset Y until fade-out ends
-                new TweenCommand(false, 0.9f, Tween.EaseNone, "ScaleX", "0.7", "ScaleY", "0.7"), //Constant scale-up
-                new TweenCommand(true, 0.9f, Tween.EaseNone, "Rotation", rotateBy.ToString()) { EndHandler = new TweenEndHandler("StopAnimation") } //Offset rotation /w end handler
-            };
+            _scale = new Vector2(0.2f);
+            _opacity = 0f;
+            _animateFlag = true;
         }
 
         public static void Display(GameObj source)
@@ -49,7 +35,21 @@ namespace RogueAPI.Effects
 
         public static void Display(Vector2 position)
         {
-            Instance.Run(position);
+            lock (_defaultCommands)
+                Instance.Run(position, x =>
+                {
+                    var fadeDelay = CDGMath.RandomFloat(0.4f, 0.7f);
+
+                    var cmd = _defaultCommands[1];
+                    cmd.Duration = 0.2f + fadeDelay;
+                    cmd.Properties[1] = CDGMath.RandomInt(5, 20).ToString();
+
+                    cmd = _defaultCommands[3];
+                    cmd.Properties[1] = (CDGMath.RandomInt(10, 45) * CDGMath.RandomPlusMinus()).ToString();
+
+                    cmd = _defaultCommands[4];
+                    cmd.Properties[1] = fadeDelay.ToString();
+                });
         }
     }
 }

@@ -45,7 +45,7 @@ namespace RogueAPI.Spells
             return true;
         }
 
-        protected override void OnDeactivate()
+        protected override void OnDeactivate(bool force)
         {
             base.Deactivate();
 

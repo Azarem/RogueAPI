@@ -23,20 +23,23 @@ namespace RogueAPI.Effects
 
         //protected IEnumerable<TweenCommand> _tweenCommands;
 
-        public virtual string SpriteName { get { return _spriteName; } set { _spriteName = value; } }
+        public virtual string SpriteName { get { return _spriteName; } }
         //public virtual bool Visible { get { return _visible; } set { _visible = value; } }
         public virtual float Opacity { get { return _opacity; } set { _opacity = value; } }
-        public virtual Vector2 Scale { get { return _scale; } set { _scale = value; } }
-        public virtual float Rotation { get { return _rotation; } set { _rotation = value; } }
+        public virtual Vector2 Scale { get { return _scale; } }
+        public virtual float Rotation { get { return _rotation; } }
         public virtual bool? AnimationFlag { get { return _animateFlag; } set { _animateFlag = value; } }
         public virtual float AnimationDelay { get { return _animationDelay; } set { _animationDelay = value; } }
         public virtual int OutlineWidth { get { return _outlineWidth; } set { _outlineWidth = value; } }
-        //public virtual IEnumerable<TweenCommand> TweenCommands { get { return _tweenCommands; } set { _tweenCommands = value; } }
+        protected virtual IList<TweenCommand> TweenCommands { get { return null; } }
 
         protected virtual EffectSpriteInstance CreateSprite(Vector2 position)
         {
             var sprite = AllocateSprite();
-            sprite.ChangeSprite(SpriteName);
+            var spriteName = SpriteName;
+            if (spriteName != null)
+                sprite.ChangeSprite(SpriteName);
+
             sprite.Visible = true;
             sprite.Scale = Scale;
             sprite.Opacity = Opacity;
@@ -44,6 +47,7 @@ namespace RogueAPI.Effects
             sprite.Rotation = Rotation;
             sprite.OutlineWidth = OutlineWidth;
             sprite.AnimationDelay = AnimationDelay;
+            //sprite.TextureColor = Color.White;
             return sprite;
         }
 
@@ -53,10 +57,10 @@ namespace RogueAPI.Effects
                 sprite.PlayAnimation(AnimationFlag.Value);
         }
 
-        protected virtual IList<TweenCommand> GetTweenCommands(EffectSpriteInstance sprite)
-        {
-            return null;
-        }
+        //protected virtual IList<TweenCommand> GetTweenCommands(EffectSpriteInstance sprite)
+        //{
+        //    return null;
+        //}
 
         protected virtual void ApplyTweens(EffectSpriteInstance sprite, IList<TweenCommand> commands)
         {
@@ -68,8 +72,7 @@ namespace RogueAPI.Effects
         protected virtual void Run(Vector2 position, Action<EffectDisplayEvent> initHandler = null)
         {
             var sprite = CreateSprite(position);
-            var tweens = GetTweenCommands(sprite);
-            var evt = new EffectDisplayEvent(this, sprite, tweens);
+            var evt = new EffectDisplayEvent(this, sprite, TweenCommands);
             initHandler?.Invoke(evt);
             evt.Trigger();
             Animate(sprite);

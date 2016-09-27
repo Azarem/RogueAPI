@@ -47,5 +47,19 @@ namespace RogueAPI.Projectiles
         {
             base.OnDestroy(proj, hitPlayer);
         }
+
+        public override bool OnCollision(ProjectileObj proj, PhysicsObjContainer target, bool targetIsPlayer, Vector2 knockbackAmount)
+        {
+            if (knockbackAmount != Vector2.Zero)
+            {
+                float inertia = 3f;
+
+                target.CurrentSpeed = 0f;
+                target.AccelerationX = knockbackAmount.X * (target.X >= proj.Source.X ? inertia : -inertia);
+                target.AccelerationY = -knockbackAmount.Y * inertia;
+            }
+
+            return false;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using RogueAPI.Game;
 
 namespace RogueAPI.Traits
 {
@@ -17,6 +18,23 @@ namespace RogueAPI.Traits
             this.Rarity = 3;
 
             this.TraitConflicts.Add(Hypergonadism.Instance);
+        }
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Event<EnemyHitEventArgs>.Handler += EnemyHitHandler;
+        }
+
+        protected internal override void Deactivate(Player player)
+        {
+            Event<EnemyHitEventArgs>.Handler -= EnemyHitHandler;
+            base.Deactivate(player);
+        }
+
+        private void EnemyHitHandler(EnemyHitEventArgs args)
+        {
+            args.KnockbackForce = 0;
         }
     }
 }

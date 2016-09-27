@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RogueAPI.Game;
+using System;
 using System.Linq;
 
 namespace RogueAPI.Traits
@@ -15,6 +16,23 @@ namespace RogueAPI.Traits
             this.Description = "You're perma-roided. Attacks knock enemies further.";
             this.ProfileCardDescription = "You knock enemies out of the park.";
             this.Rarity = 1;
+        }
+
+        protected internal override void Activate(Player player)
+        {
+            base.Activate(player);
+            Event<EnemyHitEventArgs>.Handler += EnemyHitHandler;
+        }
+
+        protected internal override void Deactivate(Player player)
+        {
+            Event<EnemyHitEventArgs>.Handler -= EnemyHitHandler;
+            base.Deactivate(player);
+        }
+
+        private void EnemyHitHandler(EnemyHitEventArgs args)
+        {
+            args.KnockbackForce *= 2;
         }
     }
 }

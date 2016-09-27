@@ -145,7 +145,7 @@ namespace RogueAPI.Spells
                         SoundManager.PlaySound(soundList);
 
                     if (showManaText)
-                        Core.DisplayNumberString(-totalCost, "mp", Color.SkyBlue, new Vector2(source.GameObject.X, source.GameObject.TerrainBounds.Top));
+                        Core.DisplayNumberString(-totalCost, "mp", Color.SkyBlue, new Vector2(source.GameObject.X, source.GameObject.Bounds.Top));
 
                     if (toggle)
                     {
@@ -166,7 +166,7 @@ namespace RogueAPI.Spells
 
         protected virtual void UpdateHandler(PlayerUpdateEvent evt)
         {
-            if (toggle && isActive)
+            if (toggle && isActive && manaDrainAmount != 0)
                 DrainMana(evt);
 
             if (castDelayCounter > 0)
@@ -188,19 +188,19 @@ namespace RogueAPI.Spells
             }
         }
 
-        public bool Deactivate()
+        public bool Deactivate(bool force = false)
         {
             if (!toggle || !isActive)
                 return false;
 
-            OnDeactivate();
+            OnDeactivate(force);
 
             isActive = false;
             manaDrainCounter = 0;
             return true;
         }
 
-        protected virtual void OnDeactivate() { }
+        protected virtual void OnDeactivate(bool force) { }
 
         //internal protected virtual void UpdateProjectile(ProjectileObj proj, GameTime gameTime)
         //{

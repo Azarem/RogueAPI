@@ -45,7 +45,7 @@ namespace RogueAPI.Projectiles
                     //ProceduralLevelScreen currentScreen = Game.ScreenManager.CurrentScreen as ProceduralLevelScreen;
                     //if (currentScreen != null)
                     //{
-                    Effects.CrowSmokeEffect.Display(proj.Position);
+                    Effects.BlackSmokeEffect.DisplayCrowSmoke(proj.Position);
                     proj.AltY = 0.05f;
                     //}
                 }
@@ -89,7 +89,7 @@ namespace RogueAPI.Projectiles
 
         public override void OnDestroy(ProjectileObj proj, bool hitPlayer)
         {
-            Effects.BlackSmokeEffect.Display(proj.Position);
+            Effects.BlackSmokeEffect.DisplayCrowDestruction(proj.Position);
             Effects.CrowFeatherEffect.Display(proj.Position);
 
             proj.KillProjectile();

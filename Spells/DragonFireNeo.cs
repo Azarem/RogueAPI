@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using RogueAPI.Game;
 
 namespace RogueAPI.Spells
 {
@@ -12,12 +13,14 @@ namespace RogueAPI.Spells
         protected DragonFireNeo(byte id)
             : base(id)
         {
-            baseProjectile.Speed = new Vector2(1750f, 1750f);
-            baseProjectile.Lifespan = 0.75f;
-            baseProjectile.Scale = new Vector2(2.75f, 2.75f);
-            baseProjectile.WrapProjectile = true;
-            miscValue1 = 0.75f;
             manaCost = 0;
+        }
+
+        protected override bool OnCast(Entity source)
+        {
+            var proj = Projectiles.DragonFireNeoProjectile.Fire(source.GameObject);
+            Effects.SpellCastEffect.Display(proj.Position, proj.Rotation, true);
+            return true;
         }
     }
 }
