@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using Tweener;
 using Tweener.Ease;
 
 namespace RogueAPI.Effects
@@ -11,7 +10,7 @@ namespace RogueAPI.Effects
     {
         public static readonly DustEffect Instance = new DustEffect();
 
-        private static readonly TweenCommand[] _defaultCommands = new TweenCommand[] {
+        protected static readonly TweenCommand[] _defaultCommands = new TweenCommand[] {
             new TweenCommand(false, 0.2f, Linear.EaseNone, "Opacity", "1"),
             new TweenCommand(true, 0.7f, Linear.EaseNone, "Rotation", "180"),
             new TweenCommand(true, 0.7f, Quad.EaseOut, "X", "0", "Y", "0"),
@@ -44,11 +43,18 @@ namespace RogueAPI.Effects
             Display(position, null);
         }
 
-        public static void Display(Vector2 position, bool? flip = null)
+        public static void DisplayTurretFire(Vector2 position, float scale)
+        {
+            Display(position, null, 20, 50, scale);
+        }
+
+        public static void Display(Vector2 position, bool? flip = null, int drift = 30, int? rotateRange = null, float scale = 0.8f)
         {
             lock (_defaultCommands)
                 Instance.Run(position, x =>
                 {
+                    x.Sprite.Scale = new Vector2(scale);
+
                     float xDrift, yDrift;
 
                     if (flip != null)
@@ -68,18 +74,23 @@ namespace RogueAPI.Effects
                     }
                     else
                     {
-                        xDrift = CDGMath.RandomInt(-30, 30);
-                        yDrift = CDGMath.RandomInt(-30, 30);
+                        xDrift = CDGMath.RandomInt(-drift, drift);
+                        yDrift = CDGMath.RandomInt(-drift, drift);
                     }
 
-                    x.TweenCommands[0].Properties[1] = "1";
-                    x.TweenCommands[3].InitialValues[0] = 1f;
+                    var cmd = x.TweenCommands[0];
+                    cmd.Properties[1] = "1";
 
-                    var cmd = x.TweenCommands[2];
+                    cmd = x.TweenCommands[1];
+                    cmd.Properties[1] = rotateRange == null ? "180" : CDGMath.RandomInt(-rotateRange.Value, rotateRange.Value).ToString();
 
-
+                    cmd = x.TweenCommands[2];
                     cmd.Properties[1] = xDrift.ToString();
                     cmd.Properties[3] = yDrift.ToString();
+
+                    cmd = x.TweenCommands[3];
+                    cmd.Duration = rotateRange == null ? 0.5f : 0.4f;
+                    cmd.InitialValues[0] = 1f;
                 });
         }
 

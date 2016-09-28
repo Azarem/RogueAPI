@@ -39,7 +39,7 @@ namespace RogueAPI.Effects
                 : Tween.To(Target ?? target, Duration, Easing, Properties);
 
             if (InitialValues != null)
-                SetInitialValues(this, InitialValues);
+                SetInitialValues(this, InitialValues.Copy());
 
             if (EndHandler != null)
                 if (EndHandler.Target is Type)
