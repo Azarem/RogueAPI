@@ -322,6 +322,34 @@ namespace RogueAPI.Projectiles
         //    base.CollisionResponse(thisBox, otherBox, collisionResponseType);
         //}
 
+        protected override GameObj CreateCloneInstance()
+        {
+            return new ProjectileObj(SpriteName);
+        }
+
+        protected override void FillCloneInstance(object obj)
+        {
+            base.FillCloneInstance(obj);
+            var target = obj as ProjectileObj;
+
+            target.Target = Target;
+            target.CollidesWithTerrain = CollidesWithTerrain;
+            target.ChaseTarget = ChaseTarget;
+            target.FollowArc = FollowArc;
+            target.ShowIcon = ShowIcon;
+            target.DestroysWithTerrain = DestroysWithTerrain;
+            target.AltX = AltX;
+            target.AltY = AltY;
+            target.Spell = Spell;
+            target.IgnoreBoundsCheck = IgnoreBoundsCheck;
+            target.DestroysWithEnemy = DestroysWithEnemy;
+            target.DestroyOnRoomTransition = DestroyOnRoomTransition;
+            target.Source = Source;
+            target.CanBeFusRohDahed = CanBeFusRohDahed;
+            target.WrapProjectile = WrapProjectile;
+            target.IgnoreInvincibleCounter = IgnoreInvincibleCounter;
+        }
+
         public void RunDestroyAnimation(bool hitPlayer)
         {
             if (!IsDying && !IsDemented)

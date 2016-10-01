@@ -13,7 +13,7 @@ namespace RogueAPI.Effects
         private static readonly TweenCommand[] _defaultCommands = new TweenCommand[] {
             new TweenCommand(false, 0.4f, Tween.EaseNone, "delay", "0", "Opacity", "1"),
             new TweenCommand(true, 1.5f, Quad.EaseInOut, "delay", "0", "X", "0", "Y", "0", "Rotation", "0"),
-            new TweenCommand(false, 1f, Tween.EaseNone, "delay", "0.5", "Opacity", "0") { InitialValues = new [] { 1f }, EndHandler = new TweenEndHandler("StopAnimation") }
+            new TweenCommand(false, 1f, Tween.EaseNone, "delay", "0.5", "Opacity", "0") { InitialValues = new [] { 0, 1f }, EndHandler = new TweenEndHandler("StopAnimation") }
         };
 
         public override float Rotation { get { return CDGMath.RandomInt(-30, 30); } }

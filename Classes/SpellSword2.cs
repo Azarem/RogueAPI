@@ -55,8 +55,8 @@ namespace RogueAPI.Classes
 
         protected virtual void EffectDisplay(EffectDisplayEvent args)
         {
-            if (args.Effect is SpellCastEffect)
-                args.Sprite.TextureColor = Color.Red;
+            //if (args.Effect is SpellCastEffect)
+            //    args.Sprite.TextureColor = Color.Red;
         }
     }
 }

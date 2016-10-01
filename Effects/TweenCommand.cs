@@ -18,7 +18,7 @@ namespace RogueAPI.Effects
         public TweenEndHandler EndHandler;
         public bool Offset;
 
-        protected static Action<object, object> SetInitialValues = typeof(TweenObject).GetField("_initialValues").SetValue;
+        protected static Action<object, object> SetInitialValues = typeof(TweenObject).GetField("_initialValues", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue;
 
         protected TweenCommand() { }
 
@@ -34,18 +34,24 @@ namespace RogueAPI.Effects
 
         public void Call(object target = null)
         {
+            var props = Properties.Copy();
+
             var tween = Offset
-                ? Tween.By(Target ?? target, Duration, Easing, Properties)
-                : Tween.To(Target ?? target, Duration, Easing, Properties);
+                ? Tween.By(Target ?? target, Duration, Easing, props)
+                : Tween.To(Target ?? target, Duration, Easing, props);
 
             if (InitialValues != null)
-                SetInitialValues(this, InitialValues.Copy());
+                SetInitialValues(tween, InitialValues.Copy());
 
             if (EndHandler != null)
+            {
+                var args = EndHandler.Arguments?.Copy();
+
                 if (EndHandler.Target is Type)
-                    tween.EndHandler(EndHandler.Target as Type, EndHandler.Function, EndHandler.Arguments);
+                    tween.EndHandler(EndHandler.Target as Type, EndHandler.Function, args);
                 else
-                    tween.EndHandler(EndHandler.Target ?? target, EndHandler.Function, EndHandler.Arguments);
+                    tween.EndHandler(EndHandler.Target ?? target, EndHandler.Function, args);
+            }
         }
 
         public TweenCommand Clone()

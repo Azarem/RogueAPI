@@ -14,8 +14,10 @@ namespace RogueAPI.Game
         private static InputFlags _currentInputFlags;
         private static InputFlags _newInputFlags;
 
-        private static InputKeys?[] _buttonMap = new InputKeys?[31];
-        private static Dictionary<Keys, InputKeys> _keyMap = new Dictionary<Keys, InputKeys>();
+        private static Buttons[] _buttonMap = new Buttons[31];
+        private static Keys[] _keyMap = new Keys[31];
+        private static Dictionary<Buttons, HashSet<InputFlags>> _buttonFlagMap = new Dictionary<Buttons, HashSet<InputFlags>>();
+        private static Dictionary<Keys, HashSet<InputFlags>> _keyFlagMap = new Dictionary<Keys, HashSet<InputFlags>>();
         private static List<ThumbStickMap> _stickMap = new List<ThumbStickMap>();
 
         public static InputFlags PressedFlags { get { return _currentInputFlags; } }
@@ -32,30 +34,65 @@ namespace RogueAPI.Game
             return false;
         }
 
-        public static void MapButton(Buttons button, InputKeys? input)
+        public static void MapButton(Buttons button, InputKeys input)
         {
-            int bitRail = (int)button;
-            int index = -1;
+            int i = (int)input;
+            var oldKey = _buttonMap[i];
+            _buttonMap[i] = button;
 
-            while (bitRail > 0 && (bitRail & 1) == 0)
+            var flag = (InputFlags)(1 << i);
+
+            if (oldKey != 0 && (_buttonFlagMap.ContainsKey(oldKey)))
+                _buttonFlagMap[oldKey].Remove(flag);
+
+            if (button != 0)
             {
-                bitRail >>= 1;
-                index++;
+                HashSet<InputFlags> list;
+                if (!_buttonFlagMap.TryGetValue(button, out list))
+                    _buttonFlagMap[button] = list = new HashSet<InputFlags>();
+                list.Add(flag);
             }
 
-            if (index >= 0)
-                _buttonMap[index] = input;
+            //int bitRail = (int)button;
+            //int index = -1;
+
+            //while (bitRail > 0 && (bitRail & 1) == 0)
+            //{
+            //    bitRail >>= 1;
+            //    index++;
+            //}
+
+            //if (index >= 0)
+            //    _buttonMap[index] = input;
         }
 
-        public static void MapKey(Keys key, InputKeys? input)
+        public static void MapKey(Keys key, InputKeys input)
         {
-            if (input == null)
+            int i = (int)input;
+            var oldKey = _keyMap[i];
+            _keyMap[i] = key;
+
+            var flag = (InputFlags)(1 << i);
+
+            if (oldKey != 0 && (_keyFlagMap.ContainsKey(oldKey)))
+                _keyFlagMap[oldKey].Remove(flag);
+
+            if (key != 0)
             {
-                if (_keyMap.ContainsKey(key))
-                    _keyMap.Remove(key);
+                HashSet<InputFlags> list;
+                if (!_keyFlagMap.TryGetValue(key, out list))
+                    _keyFlagMap[key] = list = new HashSet<InputFlags>();
+                list.Add(flag);
             }
-            else
-                _keyMap[key] = input.Value;
+
+
+            //if (input == null)
+            //{
+            //    if (_keyMap.ContainsKey(key))
+            //        _keyMap.Remove(key);
+            //}
+            //else
+            //    _keyMap[key] = input.Value;
         }
 
         public static void MapStick(InputKeys key, ThumbStick stick, float direction, float hysteresis)
@@ -65,23 +102,27 @@ namespace RogueAPI.Game
 
         public static Buttons GetMappedButton(InputKeys key)
         {
-            int index = -1;
-            int length = _buttonMap.Length;
-            while (++index < length)
-            {
-                if (key == _buttonMap[index])
-                    return (Buttons)(1 << index);
-            }
+            return _buttonMap[(int)key];
 
-            return 0;
+            //int index = -1;
+            //int length = _buttonMap.Length;
+            //while (++index < length)
+            //{
+            //    if (key == _buttonMap[index])
+            //        return (Buttons)(1 << index);
+            //}
+
+            //return 0;
         }
 
         public static Keys GetMappedKey(InputKeys key)
         {
-            foreach (var k in _keyMap)
-                if (k.Value == key)
-                    return k.Key;
-            return 0;
+            return _keyMap[(int)key];
+
+            //foreach (var k in _keyMap)
+            //    if (k.Value == key)
+            //        return k.Key;
+            //return 0;
         }
 
         public static void Update()
@@ -103,25 +144,47 @@ namespace RogueAPI.Game
         {
             int i = 0, length = _buttonMap.Length;
             while (i < length)
-                _buttonMap[i++] = null;
+                _buttonMap[i++] = 0;
 
-            _keyMap.Clear();
+            i = 0;
+            length = _keyMap.Length;
+            while (i < length)
+                _keyMap[i++] = 0;
+
+            _keyFlagMap.Clear();
+            _buttonFlagMap.Clear();
+
+            //_keyMap.Clear();
             _stickMap.Clear();
         }
 
         private static InputFlags GetKeyFlags()
         {
-            int keyFlags = 0;
+            InputFlags keyFlags = 0;
+            //int index, length = _keyMap.Length;
+            HashSet<InputFlags> list;
 
             var state = Keyboard.GetState(PlayerIndex.One);
             foreach (var k in state.GetPressedKeys())
             {
-                InputKeys inputKey;
-                if (_keyMap.TryGetValue(k, out inputKey))
-                    keyFlags |= 1 << (int)inputKey;
+                if (_keyFlagMap.TryGetValue(k, out list))
+                {
+                    foreach (var flag in list)
+                        keyFlags |= flag;
+                }
+                //index = 0;
+                //while (index < length)
+                //{
+                //    if (_keyMap[index] == k)
+                //        keyFlags |= 1 << (int)index;
+                //    index++;
+                //}
+                //InputKeys inputKey;
+                //if (_keyMap.TryGetValue(k, out inputKey))
+                //    keyFlags |= 1 << (int)inputKey;
             }
 
-            return (InputFlags)keyFlags;
+            return keyFlags;
         }
 
         private static InputFlags GetStickFlags(GamePadState state)
@@ -147,8 +210,7 @@ namespace RogueAPI.Game
 
         private static InputFlags GetButtonFlags(GamePadState state)
         {
-            int keyFlags = 0;
-
+            InputFlags keyFlags = 0;
             Buttons buttonFlags = 0;
 
             var buttons = state.Buttons;
@@ -216,20 +278,25 @@ namespace RogueAPI.Game
             }
 
             int bitRail = (int)buttonFlags;
-            int index = 0;
+            int index = 1;
+            HashSet<InputFlags> list;
             while (bitRail > 0)
             {
-                if ((bitRail & 1) != 0)
-                {
-                    var key = _buttonMap[index];
-                    if (key != null)
-                        keyFlags |= 1 << (int)key.Value;
-                }
+                if (_buttonFlagMap.TryGetValue((Buttons)index, out list))
+                    foreach (var flag in list)
+                        keyFlags |= flag;
+
+                //if ((bitRail & 1) != 0)
+                //{
+                //    var key = _buttonMap[index];
+                //    if (key != null)
+                //        keyFlags |= 1 << (int)key.Value;
+                //}
                 bitRail >>= 1;
-                index++;
+                index <<= 1;
             }
 
-            return (InputFlags)keyFlags;
+            return keyFlags;
         }
 
         private static Vector2 ApplyStickDeadZone(Vector2 pos, float deadZoneSize)

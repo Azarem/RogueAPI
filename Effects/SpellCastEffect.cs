@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DS2DEngine;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace RogueAPI.Effects
 {
@@ -14,13 +16,20 @@ namespace RogueAPI.Effects
             _animateFlag = false;
         }
 
-        public static void Display(Vector2 position, float angle, bool canRotate = false)
+        public static void Display(GameObj source, float angle, bool canRotate = false, bool megaSpell = false)
+        {
+            Display(source.Position, angle, canRotate, source.Flip == SpriteEffects.None, megaSpell);
+        }
+
+        public static void Display(Vector2 position, float angle, bool canRotate = false, bool flip = false, bool megaSpell = false)
         {
             //Should add support for 'boss' version where angle is inverted based on obj flip
             Instance.Run(position, x =>
             {
-                x.Sprite.Rotation = angle;
+                x.Sprite.Rotation = flip ? -angle : angle;
                 x.Sprite.CanBeRotated = canRotate;
+                if (megaSpell)
+                    x.Sprite.TextureColor = Color.Red;
             });
         }
 
