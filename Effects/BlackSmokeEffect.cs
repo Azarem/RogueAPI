@@ -13,7 +13,7 @@ namespace RogueAPI.Effects
         private static readonly TweenCommand[] _defaultCommands = new TweenCommand[] {
             new TweenCommand(false, 0.4f, Tween.EaseNone, "delay", "0", "Opacity", "1"),
             new TweenCommand(true, 1.5f, Quad.EaseInOut, "delay", "0", "X", "0", "Y", "0", "Rotation", "0"),
-            new TweenCommand(false, 1f, Tween.EaseNone, "delay", "0.5", "Opacity", "0") { InitialValues = new [] { 0, 1f }, EndHandler = new TweenEndHandler("StopAnimation") }
+            new TweenCommand(false, 1f, Tween.EaseNone, "delay", "0.5", "Opacity", "0") { InitialValues = new [] { 1f }, EndHandler = new TweenEndHandler("StopAnimation") }
         };
 
         public override float Rotation { get { return CDGMath.RandomInt(-30, 30); } }
@@ -27,7 +27,7 @@ namespace RogueAPI.Effects
         }
 
 
-        public static void Display(Vector2 position, int xRange = 40, int yRange = 40, float scale = 1f, bool? flip = null, bool furtherDrift = false, bool longerDuration = false, bool randomDelay = false)
+        public static void Display(Vector2 position, int xRange = 40, int yRange = 40, float scale = 1f, bool? flipDrift = null, bool furtherDrift = false, bool longerDuration = false, bool randomDelay = false)
         {
             lock (_defaultCommands)
             {
@@ -54,7 +54,7 @@ namespace RogueAPI.Effects
                         yDrift = CDGMath.RandomInt(-50, 50);
                     }
 
-                    if (flip != null)
+                    if (flipDrift != null)
                     {
                         if (CDGMath.RandomPlusMinus() < 0)
                             x.Sprite.Flip = SpriteEffects.FlipHorizontally;
@@ -62,7 +62,8 @@ namespace RogueAPI.Effects
                         if (CDGMath.RandomPlusMinus() < 0)
                             x.Sprite.Flip = SpriteEffects.FlipVertically;
 
-                        xDrift = -xDrift;
+                        if (flipDrift.Value)
+                            xDrift = -xDrift;
                     }
 
                     TweenCommand cmd0 = x.TweenCommands[0], cmd1 = x.TweenCommands[1], cmd2 = x.TweenCommands[2];
@@ -113,11 +114,11 @@ namespace RogueAPI.Effects
 
         public static void Display(GameObj source, int number = 2)
         {
-            bool invertX = source.Flip != SpriteEffects.FlipHorizontally;
-            float posX = invertX ? source.Bounds.Left : source.Bounds.Right;
+            bool flip = source.Flip == SpriteEffects.FlipHorizontally;
+            float posX = flip ? source.Bounds.Right : source.Bounds.Left;
 
             for (int i = 0; i < number; i++)
-                Display(new Vector2(posX, source.Y), xRange: 0, flip: invertX, longerDuration: true, furtherDrift: true);
+                Display(new Vector2(posX, source.Y), xRange: 0, flipDrift: !flip, longerDuration: true, furtherDrift: true);
         }
 
     }

@@ -14,14 +14,36 @@ namespace RogueAPI.Game
         private static InputFlags _currentInputFlags;
         private static InputFlags _newInputFlags;
 
+        private static Buttons _currentButtonsPressed;
+        private static Keys[] _currentKeysPressed;
+
         private static Buttons[] _buttonMap = new Buttons[31];
         private static Keys[] _keyMap = new Keys[31];
         private static Dictionary<Buttons, HashSet<InputFlags>> _buttonFlagMap = new Dictionary<Buttons, HashSet<InputFlags>>();
         private static Dictionary<Keys, HashSet<InputFlags>> _keyFlagMap = new Dictionary<Keys, HashSet<InputFlags>>();
         private static List<ThumbStickMap> _stickMap = new List<ThumbStickMap>();
 
+        private static readonly InputFlags _systemKeys =
+            InputFlags.MenuCancel1 |
+            InputFlags.MenuCancel2 |
+            InputFlags.MenuConfirm1 |
+            InputFlags.MenuConfirm2 |
+            InputFlags.MenuCredits |
+            InputFlags.MenuDeleteProfile |
+            InputFlags.MenuMap |
+            InputFlags.MenuOptions |
+            InputFlags.MenuPause |
+            InputFlags.MenuProfileCard |
+            InputFlags.MenuProfileSelect |
+            InputFlags.MenuRogueMode
+        ;
+
         public static InputFlags PressedFlags { get { return _currentInputFlags; } }
         public static InputFlags NewlyPressedFlags { get { return _newInputFlags; } }
+        public static Buttons PressedButtons { get { return _currentButtonsPressed; } }
+        public static Keys[] PressedKeys { get { return _currentKeysPressed; } }
+        //public static Keys[] KeyMap { get { return _keyMap; } }
+        //public static Buttons[] ButtonMap { get { return _buttonMap; } }
 
         public static float ThumbstickDeadzone;
 
@@ -38,61 +60,70 @@ namespace RogueAPI.Game
         {
             int i = (int)input;
             var oldKey = _buttonMap[i];
+
+            if (oldKey == button)
+                return;
+
             _buttonMap[i] = button;
 
-            var flag = (InputFlags)(1 << i);
+            HashSet<InputFlags> lookup;
 
-            if (oldKey != 0 && (_buttonFlagMap.ContainsKey(oldKey)))
-                _buttonFlagMap[oldKey].Remove(flag);
+            var flag = (InputFlags)i.ToBitFlag();
+            InputFlags oldMap = 0;
+
+            if (oldKey != 0 && _buttonFlagMap.TryGetValue(oldKey, out lookup))
+                lookup.Remove(flag);
 
             if (button != 0)
             {
-                HashSet<InputFlags> list;
-                if (!_buttonFlagMap.TryGetValue(button, out list))
-                    _buttonFlagMap[button] = list = new HashSet<InputFlags>();
-                list.Add(flag);
+                if (!_buttonFlagMap.TryGetValue(button, out lookup))
+                    _buttonFlagMap[button] = lookup = new HashSet<InputFlags>();
+
+                //Find existing player-mapped key, so it can be swapped
+                if (oldKey != 0 && (_systemKeys & flag) == 0)
+                    oldMap = lookup.FirstOrDefault(x => (_systemKeys & x) == 0);
+
+                lookup.Add(flag);
             }
 
-            //int bitRail = (int)button;
-            //int index = -1;
-
-            //while (bitRail > 0 && (bitRail & 1) == 0)
-            //{
-            //    bitRail >>= 1;
-            //    index++;
-            //}
-
-            //if (index >= 0)
-            //    _buttonMap[index] = input;
+            //Swap player key maps
+            if (oldMap != 0)
+                MapButton(oldKey, (InputKeys)((int)oldMap).FromBitFlag());
         }
 
         public static void MapKey(Keys key, InputKeys input)
         {
             int i = (int)input;
             var oldKey = _keyMap[i];
+
+            if (oldKey == key)
+                return;
+
             _keyMap[i] = key;
 
-            var flag = (InputFlags)(1 << i);
+            HashSet<InputFlags> lookup;
 
-            if (oldKey != 0 && (_keyFlagMap.ContainsKey(oldKey)))
-                _keyFlagMap[oldKey].Remove(flag);
+            var flag = (InputFlags)i.ToBitFlag();
+            InputFlags oldMap = 0;
+
+            if (oldKey != 0 && _keyFlagMap.TryGetValue(oldKey, out lookup))
+                lookup.Remove(flag);
 
             if (key != 0)
             {
-                HashSet<InputFlags> list;
-                if (!_keyFlagMap.TryGetValue(key, out list))
-                    _keyFlagMap[key] = list = new HashSet<InputFlags>();
-                list.Add(flag);
+                if (!_keyFlagMap.TryGetValue(key, out lookup))
+                    _keyFlagMap[key] = lookup = new HashSet<InputFlags>();
+
+                //Find existing player-mapped key, so it can be swapped
+                if (oldKey != 0 && (_systemKeys & flag) == 0)
+                    oldMap = lookup.FirstOrDefault(x => (_systemKeys & x) == 0);
+
+                lookup.Add(flag);
             }
 
-
-            //if (input == null)
-            //{
-            //    if (_keyMap.ContainsKey(key))
-            //        _keyMap.Remove(key);
-            //}
-            //else
-            //    _keyMap[key] = input.Value;
+            //Swap player key maps
+            if (oldMap != 0)
+                MapKey(oldKey, (InputKeys)((int)oldMap).FromBitFlag());
         }
 
         public static void MapStick(InputKeys key, ThumbStick stick, float direction, float hysteresis)
@@ -136,8 +167,13 @@ namespace RogueAPI.Game
                 _currentInputFlags |= GetButtonFlags(state);
                 _currentInputFlags |= GetStickFlags(state);
             }
+            else
+                _currentButtonsPressed = 0;
 
             _newInputFlags = ~last & _currentInputFlags;
+
+            if (_newInputFlags != 0)
+                System.Diagnostics.Debug.WriteLine("New Inputs: {0}", _newInputFlags);
         }
 
         public static void ClearAll()
@@ -165,7 +201,8 @@ namespace RogueAPI.Game
             HashSet<InputFlags> list;
 
             var state = Keyboard.GetState(PlayerIndex.One);
-            foreach (var k in state.GetPressedKeys())
+            _currentKeysPressed = state.GetPressedKeys();
+            foreach (var k in _currentKeysPressed)
             {
                 if (_keyFlagMap.TryGetValue(k, out list))
                 {
@@ -277,6 +314,8 @@ namespace RogueAPI.Game
                     buttonFlags |= Buttons.RightThumbstickUp;
             }
 
+            _currentButtonsPressed = buttonFlags;
+
             int bitRail = (int)buttonFlags;
             int index = 1;
             HashSet<InputFlags> list;
@@ -367,6 +406,16 @@ namespace RogueAPI.Game
         public static bool IsNewlyPressedAll(InputFlags flags)
         {
             return (_newInputFlags & flags) == flags;
+        }
+
+        public static bool IsAnyButtonPressed()
+        {
+            return _currentButtonsPressed != 0;
+        }
+
+        public static bool IsAnyKeyPressed()
+        {
+            return _currentKeysPressed != null && _currentKeysPressed.Length > 0;
         }
 
     }

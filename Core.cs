@@ -72,6 +72,23 @@ namespace RogueAPI
             return newArr;
         }
 
+        public static int ToBitFlag(this int value)
+        {
+            return 1 << value;
+        }
+
+        public static int FromBitFlag(this int value)
+        {
+            int index = -1;
+            while(value > 0)
+            {
+                value >>= 1;
+                index++;
+            }
+
+            return index;
+        }
+
         public static bool IsPlayer(this GameObj obj)
         {
             return obj == Game.Player.Instance.GameObject;
