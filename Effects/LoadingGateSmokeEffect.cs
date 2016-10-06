@@ -35,7 +35,7 @@ namespace RogueAPI.Effects
 
                         cmd = _defaultCommands[3];
                         cmd.Duration = 0.5f;
-                        cmd.InitialValues[1] = 0.8f;
+                        cmd.InitialValues[0] = 0.8f;
                     });
         }
     }

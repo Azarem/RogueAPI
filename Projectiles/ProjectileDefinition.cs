@@ -110,7 +110,7 @@ namespace RogueAPI.Projectiles
             Target = null;
         }
 
-        protected static class Destroy
+        public static class Destroy
         {
             public static void Explosion(ProjectileObj proj, bool hitPlayer)
             {

@@ -310,6 +310,18 @@ namespace RogueAPI.Projectiles
             IsDying = false;
         }
 
+        public override void Dispose()
+        {
+            if (!base.IsDisposed)
+            {
+                this.Target = null;
+                this.AttachedIcon = null;
+                this.Source = null;
+                base.Dispose();
+            }
+        }
+
+
         public bool OnCollision(PhysicsObjContainer target, bool targetIsPlayer, Vector2 knockbackAmount)
         {
             if (Definition != null)
@@ -361,6 +373,8 @@ namespace RogueAPI.Projectiles
 
                 if (Definition != null)
                     Definition.OnDestroy(this, hitPlayer);
+                else
+                    ProjectileDefinition.Destroy.Explosion(this, hitPlayer);
 
 
                 //string spriteName = base.SpriteName;
