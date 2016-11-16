@@ -83,7 +83,7 @@ namespace RogueAPI.Spells
 
                 if (source is Player && (
                         i == 16 || (
-                        Player.Class is Classes.SpellSword && (i == 10 || i == 11)
+                        Player.Class is Classes.Spellthief && (i == 10 || i == 11)
                     )))
                     show = false;
 

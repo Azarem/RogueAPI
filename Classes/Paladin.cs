@@ -3,14 +3,14 @@ using System.Linq;
 
 namespace RogueAPI.Classes
 {
-    public class Knight2 : Knight
+    public class Paladin : Knight
     {
         new public const byte Id = 8;
-        new public static readonly Knight2 Instance = new Knight2();
+        new public static readonly Paladin Instance = new Paladin();
 
-        private Knight2() : this(Id) { }
+        private Paladin() : this(Id) { }
 
-        protected Knight2(byte id)
+        protected Paladin(byte id)
             : base(id)
         {
             this.DisplayName = "Paladin";

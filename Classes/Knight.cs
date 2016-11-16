@@ -20,12 +20,12 @@ namespace RogueAPI.Classes
             this.Description = "Your standard hero. Pretty good at everything.";
             this.ProfileCardDescription = "100% Base stats.";
 
-            this.AssignedSpells.Add(SpellDefinition.GetById(2));
-            this.AssignedSpells.Add(SpellDefinition.GetById(1));
-            this.AssignedSpells.Add(SpellDefinition.GetById(8));
-            this.AssignedSpells.Add(SpellDefinition.GetById(9));
-            this.AssignedSpells.Add(SpellDefinition.GetById(10));
-            this.AssignedSpells.Add(SpellDefinition.GetById(12));
+            this.AssignedSpells.Add(Axe.Instance);
+            this.AssignedSpells.Add(Dagger.Instance);
+            this.AssignedSpells.Add(Chakram.Instance);
+            this.AssignedSpells.Add(Scythe.Instance);
+            this.AssignedSpells.Add(BladeWall.Instance);
+            this.AssignedSpells.Add(Conflux.Instance);
         }
 
         protected internal override void Activate(Player player)

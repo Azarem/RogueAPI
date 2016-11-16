@@ -43,12 +43,20 @@ namespace RogueAPI
         //public static event Action<string, Screen, PhysicsObjContainer, object> ScreenExited;
         //public static event Action<string, Screen, PhysicsObjContainer, object> ScreenDraw;
 
+        private static bool _isInitialized = false;
+
         public static void Initialize()
         {
+            if (_isInitialized)
+                throw new InvalidOperationException("RogueAPI core has already been initialized.");
+
             //Perform other initialization here
 
             //Load plugins
             Plugins.PluginInitializer.Initialize();
+
+            //Attribute initializers
+            //InitializeAttribute.ProcessAll();
         }
 
         public static void OnContentLoaded()

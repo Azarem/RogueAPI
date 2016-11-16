@@ -13,8 +13,8 @@ namespace RogueAPI.Spells
 {
     public class SpellDefinition : ILinkContainer<SpellDefinition, TraitDefinition>, ILinkContainer<SpellDefinition, ClassDefinition>
     {
-        public static readonly SpellDefinition None = new SpellDefinition(0);
         internal static readonly Dictionary<byte, SpellDefinition> Lookup = new Dictionary<byte, SpellDefinition>() { };
+        public static readonly SpellDefinition None = new SpellDefinition(0);
 
 
         protected byte spellId;
@@ -57,7 +57,7 @@ namespace RogueAPI.Spells
 
         //public SpellDefinition() { }
 
-        public SpellDefinition(byte id)
+        protected SpellDefinition(byte id)
         {
             spellId = id;
             icon = "DaggerIcon_Sprite";
@@ -76,6 +76,7 @@ namespace RogueAPI.Spells
             //    Scale = Vector2.One,
             //    ShowIcon = false
             //};
+            Lookup[id] = this;
             TraitConflicts = new LinkedList<SpellDefinition, TraitDefinition>(this);
             AssignedClasses = new LinkedList<SpellDefinition, ClassDefinition>(this);
         }
@@ -207,8 +208,8 @@ namespace RogueAPI.Spells
 
         //}
 
-        public static SpellDefinition Register(SpellDefinition def) { return Lookup[def.SpellId] = def; }
-        public static SpellDefinition Register(byte id) { return Register(new SpellDefinition(id)); }
+        //public static SpellDefinition Register(SpellDefinition def) { return Lookup[def.SpellId] = def; }
+        //public static SpellDefinition Register(byte id) { return Register(new SpellDefinition(id)); }
 
 
         public static SpellDefinition GetById(byte id)

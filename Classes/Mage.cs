@@ -7,14 +7,14 @@ using RogueAPI.Game;
 
 namespace RogueAPI.Classes
 {
-    public class Wizard : ClassDefinition
+    public class Mage : ClassDefinition
     {
         public const byte Id = 1;
-        public static readonly Wizard Instance = new Wizard();
+        public static readonly Mage Instance = new Mage();
 
-        private Wizard() : this(Id) { }
+        private Mage() : this(Id) { }
 
-        protected Wizard(byte id)
+        protected Mage(byte id)
             : base(id)
         {
             this.DisplayName = "Mage";
@@ -26,14 +26,14 @@ namespace RogueAPI.Classes
             this.MagicDamageMultiplier = 1.25f;
             this.ManaGainBonus = 6;
 
-            this.AssignedSpells.Add(SpellDefinition.GetById(2));
-            this.AssignedSpells.Add(SpellDefinition.GetById(1));
-            this.AssignedSpells.Add(SpellDefinition.GetById(4));
-            this.AssignedSpells.Add(SpellDefinition.GetById(8));
-            this.AssignedSpells.Add(SpellDefinition.GetById(9));
-            this.AssignedSpells.Add(SpellDefinition.GetById(10));
-            this.AssignedSpells.Add(SpellDefinition.GetById(11));
-            this.AssignedSpells.Add(SpellDefinition.GetById(12));
+            this.AssignedSpells.Add(Axe.Instance);
+            this.AssignedSpells.Add(Dagger.Instance);
+            this.AssignedSpells.Add(TimeStop.Instance);
+            this.AssignedSpells.Add(Chakram.Instance);
+            this.AssignedSpells.Add(Scythe.Instance);
+            this.AssignedSpells.Add(BladeWall.Instance);
+            this.AssignedSpells.Add(FlameBarrier.Instance);
+            this.AssignedSpells.Add(Conflux.Instance);
         }
 
         protected internal override void Activate(Player player)

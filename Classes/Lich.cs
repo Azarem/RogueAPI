@@ -30,9 +30,9 @@ namespace RogueAPI.Classes
             this.HealthMultiplier = 0.35f;
             this.HealthMultiplier = 0.5f;
 
-            this.AssignedSpells.Add(SpellDefinition.GetById(5));
-            this.AssignedSpells.Add(SpellDefinition.GetById(11));
-            this.AssignedSpells.Add(SpellDefinition.GetById(12));
+            this.AssignedSpells.Add(CrowStorm.Instance);
+            this.AssignedSpells.Add(FlameBarrier.Instance);
+            this.AssignedSpells.Add(Conflux.Instance);
         }
 
         protected internal override void Activate(Player player)

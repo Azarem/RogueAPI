@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace RogueAPI.Classes
 {
-    public class Banker2 : Banker
+    public class Spelunker : Miner
     {
         new public const byte Id = 13;
-        new public static readonly Banker2 Instance = new Banker2();
+        new public static readonly Spelunker Instance = new Spelunker();
 
-        private Banker2()
+        private Spelunker()
             : this(Id)
         {
             this.DisplayName = "Spelunker";
@@ -17,7 +17,7 @@ namespace RogueAPI.Classes
             this.ProfileCardDescription = "SPECIAL: Ordinary Headlamp.\n" + this.ProfileCardDescription;
         }
 
-        protected Banker2(byte id)
+        protected Spelunker(byte id)
             : base(id)
         {
         }

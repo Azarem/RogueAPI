@@ -22,7 +22,7 @@ namespace RogueAPI.Classes
             this.HealthMultiplier = 0.7f;
             this.ManaMultiplier = 0.7f;
 
-            this.AssignedSpells.Add(SpellDefinition.GetById(14));
+            this.AssignedSpells.Add(RapidDagger.Instance);
         }
     }
 }

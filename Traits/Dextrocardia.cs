@@ -17,7 +17,7 @@ namespace RogueAPI.Traits
             this.Rarity = 2;
 
             this.ClassConflicts.Add(Classes.Lich.Instance);
-            this.ClassConflicts.Add(Classes.Lich2.Instance);
+            this.ClassConflicts.Add(Classes.LichKing.Instance);
         }
 
         //PlayerHUDObj.SetPosition - Swap position of HP / MP bars

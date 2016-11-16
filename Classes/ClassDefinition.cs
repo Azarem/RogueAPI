@@ -12,21 +12,21 @@ namespace RogueAPI.Classes
     {
         internal static readonly Dictionary<byte, ClassDefinition> All = new Dictionary<byte, ClassDefinition>() { 
             {Knight.Id, Knight.Instance},
-            {Wizard.Id, Wizard.Instance},
+            {Mage.Id, Mage.Instance},
             {Barbarian.Id, Barbarian.Instance},
-            {Assassin.Id, Assassin.Instance},
-            {Ninja.Id, Ninja.Instance},
-            {Banker.Id, Banker.Instance},
-            {SpellSword.Id, SpellSword.Instance},
+            {Knave.Id, Knave.Instance},
+            {Shinobi.Id, Shinobi.Instance},
+            {Miner.Id, Miner.Instance},
+            {Spellthief.Id, Spellthief.Instance},
             {Lich.Id, Lich.Instance},
-            {Knight2.Id, Knight2.Instance},
-            {Wizard2.Id, Wizard2.Instance},
-            {Barbarian2.Id, Barbarian2.Instance},
-            {Assassin2.Id, Assassin2.Instance},
-            {Ninja2.Id, Ninja2.Instance},
-            {Banker2.Id, Banker2.Instance},
-            {SpellSword2.Id, SpellSword2.Instance},
-            {Lich2.Id, Lich2.Instance}
+            {Paladin.Id, Paladin.Instance},
+            {Archmage.Id, Archmage.Instance},
+            {BarbarianKing.Id, BarbarianKing.Instance},
+            {Assassin.Id, Assassin.Instance},
+            {Hokage.Id, Hokage.Instance},
+            {Spelunker.Id, Spelunker.Instance},
+            {Spellsword.Id, Spellsword.Instance},
+            {LichKing.Id, LichKing.Instance}
         };
 
         //public static readonly ClassDefinition None = null;

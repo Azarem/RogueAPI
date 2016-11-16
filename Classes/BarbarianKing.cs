@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace RogueAPI.Classes
 {
-    public class Barbarian2 : Barbarian
+    public class BarbarianKing : Barbarian
     {
         new public const byte Id = 10;
-        new public static readonly Barbarian2 Instance = new Barbarian2();
+        new public static readonly BarbarianKing Instance = new BarbarianKing();
 
-        private Barbarian2()
+        private BarbarianKing()
             : this(Id)
         {
             this.DisplayName = "Barbarian King";
@@ -17,7 +17,7 @@ namespace RogueAPI.Classes
             this.ProfileCardDescription = "SPECIAL: Barbarian Shout.\nHuge HP.  Low Str and MP.";
         }
 
-        protected Barbarian2(byte id)
+        protected BarbarianKing(byte id)
             : base(id)
         {
         }

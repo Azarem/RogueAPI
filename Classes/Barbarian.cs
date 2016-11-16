@@ -27,14 +27,13 @@ namespace RogueAPI.Classes
             this.HealthMultiplier = 1.5f;
             this.ManaMultiplier = 0.5f;
 
-            this.AssignedSpells.Add(SpellDefinition.GetById(2));
-            this.AssignedSpells.Add(SpellDefinition.GetById(1));
-            this.AssignedSpells.Add(SpellDefinition.GetById(8));
-            this.AssignedSpells.Add(SpellDefinition.GetById(9));
-            this.AssignedSpells.Add(SpellDefinition.GetById(10));
+            this.AssignedSpells.Add(Axe.Instance);
+            this.AssignedSpells.Add(Dagger.Instance);
+            this.AssignedSpells.Add(Chakram.Instance);
+            this.AssignedSpells.Add(Scythe.Instance);
+            this.AssignedSpells.Add(BladeWall.Instance);
         }
-
-        private ObjContainer player;
+        
 
         protected internal override void Activate(Player player)
         {

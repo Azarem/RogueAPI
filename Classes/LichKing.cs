@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace RogueAPI.Classes
 {
-    public class Lich2 : Lich
+    public class LichKing : Lich
     {
         new public const byte Id = 15;
-        new public static readonly Lich2 Instance = new Lich2();
+        new public static readonly LichKing Instance = new LichKing();
 
-        private Lich2()
+        private LichKing()
             : this(Id)
         {
             this.DisplayName = "Lich King";
@@ -17,7 +17,7 @@ namespace RogueAPI.Classes
             this.ProfileCardDescription = "SPECIAL: HP Conversion.\nKills are coverted into max HP.\nVery low Str, HP and MP.  High Int.";
         }
 
-        protected Lich2(byte id)
+        protected LichKing(byte id)
             : base(id)
         {
         }

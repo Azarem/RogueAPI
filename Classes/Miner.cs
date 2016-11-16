@@ -4,12 +4,12 @@ using RogueAPI.Spells;
 
 namespace RogueAPI.Classes
 {
-    public class Banker : ClassDefinition
+    public class Miner : ClassDefinition
     {
         public const byte Id = 5;
-        public static readonly Banker Instance = new Banker();
+        public static readonly Miner Instance = new Miner();
 
-        private Banker()
+        private Miner()
             : this(Id)
         {
             this.DisplayName = "Miner";
@@ -17,7 +17,7 @@ namespace RogueAPI.Classes
             this.ProfileCardDescription = "+30% Gold gain.\nVery weak in all other stats.";
         }
 
-        protected Banker(byte id)
+        protected Miner(byte id)
             : base(id)
         {
             this.PhysicalDamageMultiplier = 0.75f;
@@ -25,12 +25,12 @@ namespace RogueAPI.Classes
             this.ManaMultiplier = 0.5f;
             this.GoldBonus = 0.3f;
 
-            this.AssignedSpells.Add(SpellDefinition.GetById(2));
-            this.AssignedSpells.Add(SpellDefinition.GetById(1));
-            this.AssignedSpells.Add(SpellDefinition.GetById(8));
-            this.AssignedSpells.Add(SpellDefinition.GetById(9));
-            this.AssignedSpells.Add(SpellDefinition.GetById(11));
-            this.AssignedSpells.Add(SpellDefinition.GetById(12));
+            this.AssignedSpells.Add(Axe.Instance);
+            this.AssignedSpells.Add(Dagger.Instance);
+            this.AssignedSpells.Add(Chakram.Instance);
+            this.AssignedSpells.Add(Scythe.Instance);
+            this.AssignedSpells.Add(FlameBarrier.Instance);
+            this.AssignedSpells.Add(Conflux.Instance);
         }
 
         //ProfileCardScreen.SetPlayerStyle - Change player part 15 to lamp sprite

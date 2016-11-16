@@ -16,8 +16,8 @@ namespace RogueAPI.Traits
             this.ProfileCardDescription = "Randomized spells.";
             this.Rarity = 2;
 
-            this.ClassConflicts.Add(Classes.Wizard.Instance);
-            this.ClassConflicts.Add(Classes.Wizard2.Instance);
+            this.ClassConflicts.Add(Classes.Mage.Instance);
+            this.ClassConflicts.Add(Classes.Archmage.Instance);
             this.ClassConflicts.Add(Classes.Dragon.Instance);
         }
     }

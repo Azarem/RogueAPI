@@ -4,12 +4,12 @@ using RogueAPI.Spells;
 
 namespace RogueAPI.Classes
 {
-    public class Ninja : ClassDefinition
+    public class Shinobi : ClassDefinition
     {
         public const byte Id = 4;
-        public static readonly Ninja Instance = new Ninja();
+        public static readonly Shinobi Instance = new Shinobi();
 
-        private Ninja()
+        private Shinobi()
             : this(Id)
         {
             this.DisplayName = "Shinobi";
@@ -17,7 +17,7 @@ namespace RogueAPI.Classes
             this.ProfileCardDescription = "Huge Str, but you cannot land critical strikes.\n +30% Move Speed.  Low HP and MP.";
         }
 
-        public Ninja(byte id)
+        public Shinobi(byte id)
             : base(id)
         {
             this.MoveSpeedMultiplier = 0.3f;
@@ -27,13 +27,13 @@ namespace RogueAPI.Classes
             this.CriticalChanceMultiplier = 0f;
 
 
-            this.AssignedSpells.Add(SpellDefinition.GetById(2));
-            this.AssignedSpells.Add(SpellDefinition.GetById(1));
-            this.AssignedSpells.Add(SpellDefinition.GetById(6));
-            this.AssignedSpells.Add(SpellDefinition.GetById(8));
-            this.AssignedSpells.Add(SpellDefinition.GetById(9));
-            this.AssignedSpells.Add(SpellDefinition.GetById(10));
-            this.AssignedSpells.Add(SpellDefinition.GetById(12));
+            this.AssignedSpells.Add(Axe.Instance);
+            this.AssignedSpells.Add(Dagger.Instance);
+            this.AssignedSpells.Add(Translocator.Instance);
+            this.AssignedSpells.Add(Chakram.Instance);
+            this.AssignedSpells.Add(Scythe.Instance);
+            this.AssignedSpells.Add(BladeWall.Instance);
+            this.AssignedSpells.Add(Conflux.Instance);
         }
     }
 }
