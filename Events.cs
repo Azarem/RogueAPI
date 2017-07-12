@@ -184,10 +184,12 @@ namespace RogueAPI
     {
         public readonly float ElapsedSeconds;
         public readonly Game.Player Player;
+        public readonly bool UpdateEffects;
 
-        public PlayerUpdateEvent(GameTime gameTime)
+        public PlayerUpdateEvent(GameTime gameTime, bool updateEffects)
         {
             ElapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            UpdateEffects = updateEffects;
             Player = Game.Player.Instance;
         }
     }
@@ -274,8 +276,7 @@ namespace RogueAPI
 
         public static void Trigger(T args)
         {
-            if (Handler != null)
-                Handler(args);
+            Handler?.Invoke(args);
         }
     }
 }

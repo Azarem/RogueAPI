@@ -43,14 +43,14 @@ namespace RogueAPI.Classes
         {
             base.Activate(player);
             Game.Player.RetrievingSkinColor += Player_RetrievingSkinColor;
-            Game.Player.PlayerEffectsUpdating += Player_PlayerEffectsUpdating;
+            Event<PlayerUpdateEvent>.Handler += PlayerUpdateHandler;
             smokeTimer = 0.5f;
         }
 
 
         protected internal override void Deactivate(Player player)
         {
-            Game.Player.PlayerEffectsUpdating -= Player_PlayerEffectsUpdating;
+            Event<PlayerUpdateEvent>.Handler -= PlayerUpdateHandler;
             Game.Player.RetrievingSkinColor -= Player_RetrievingSkinColor;
             base.Deactivate(player);
         }
@@ -67,14 +67,17 @@ namespace RogueAPI.Classes
         }
 
 
-        void Player_PlayerEffectsUpdating(ObjContainer obj, GameTime gameTime)
+        protected virtual void PlayerUpdateHandler(PlayerUpdateEvent evt)
         {
-            smokeTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (smokeTimer <= 0f)
+            if (evt.UpdateEffects)
             {
-                smokeTimer = obj.CurrentSpeed > 0f ? 0.05f : 0.15f;
-                Effects.BlackSmokeEffect.Display(obj);
+                smokeTimer -= evt.ElapsedSeconds;
+
+                if (smokeTimer <= 0f)
+                {
+                    smokeTimer = evt.Player.GameObject.CurrentSpeed > 0f ? 0.05f : 0.15f;
+                    Effects.BlackSmokeEffect.Display(evt.Player.GameObject);
+                }
             }
         }
 

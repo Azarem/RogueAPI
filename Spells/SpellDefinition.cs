@@ -90,7 +90,7 @@ namespace RogueAPI.Spells
 
         public virtual void Detach(Player player)
         {
-            Event<PlayerUpdateEvent>.Handler += UpdateHandler;
+            Event<PlayerUpdateEvent>.Handler -= UpdateHandler;
             Event<InputEventHandler>.Handler -= InputHandler;
             castDelayCounter = 0;
         }

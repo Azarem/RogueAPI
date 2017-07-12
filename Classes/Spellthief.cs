@@ -40,7 +40,7 @@ namespace RogueAPI.Classes
         protected internal override void Activate(Player player)
         {
             base.Activate(player);
-            Player.PlayerEffectsUpdating += PlayerEffectsUpdating;
+            Event<PlayerUpdateEvent>.Handler += PlayerUpdateHandler;
             Event<EnemyHitEventArgs>.Handler += EnemyHitHandler;
             _sparkleTimer = 0.2f;
         }
@@ -48,18 +48,22 @@ namespace RogueAPI.Classes
         protected internal override void Deactivate(Player player)
         {
             Event<EnemyHitEventArgs>.Handler -= EnemyHitHandler;
-            Player.PlayerEffectsUpdating -= PlayerEffectsUpdating;
+            Event<PlayerUpdateEvent>.Handler -= PlayerUpdateHandler;
             base.Deactivate(player);
         }
 
-        private void PlayerEffectsUpdating(ObjContainer player, GameTime gameTime)
+        protected virtual void PlayerUpdateHandler(PlayerUpdateEvent evt)
         {
-            _sparkleTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (_sparkleTimer <= 0)
+            if (evt.UpdateEffects)
             {
-                _sparkleTimer = 0.2f;
-                Effects.ChestSparkleEffect.Display(player.Position);
-                Effects.ChestSparkleEffect.Display(player.Position);
+                _sparkleTimer -= evt.ElapsedSeconds;
+                if (_sparkleTimer <= 0)
+                {
+                    _sparkleTimer = 0.2f;
+                    var pos = evt.Player.GameObject.Position;
+                    Effects.ChestSparkleEffect.Display(pos);
+                    Effects.ChestSparkleEffect.Display(pos);
+                }
             }
         }
 

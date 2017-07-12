@@ -237,6 +237,7 @@
     <Compile Include="Spells\DragonFireNeo.cs" />
     <Compile Include="Spells\SpellDefinition.cs" />
     <Compile Include="Spells\Bomb.cs" />
+    <Compile Include="Spells\SpellSystem.cs" />
     <Compile Include="Spells\TimeStop.cs" />
     <Compile Include="Spells\Translocator.cs" />
     <Compile Include="States\IdleState.cs" />

@@ -26,7 +26,7 @@ namespace RogueAPI.Traits
         protected internal override void Activate(Player player)
         {
             base.Activate(player);
-            Game.Player.PlayerEffectsUpdating += Player_PlayerEffectsUpdating;
+            Event<PlayerUpdateEvent>.Handler += PlayerUpdateHandler;
             Event<ProjectileFireEvent>.Handler += ProjectileFired;
             Event<EffectDisplayEvent>.Handler += EffectDisplayed;
             questionTimer = 0.5f;
@@ -36,20 +36,20 @@ namespace RogueAPI.Traits
         {
             Event<EffectDisplayEvent>.Handler -= EffectDisplayed;
             Event<ProjectileFireEvent>.Handler -= ProjectileFired;
-            Game.Player.PlayerEffectsUpdating -= Player_PlayerEffectsUpdating;
+            Event<PlayerUpdateEvent>.Handler -= PlayerUpdateHandler;
             base.Deactivate(player);
         }
 
-        void Player_PlayerEffectsUpdating(ObjContainer player, GameTime gameTime)
+        protected virtual void PlayerUpdateHandler(PlayerUpdateEvent evt)
         {
-            if (player.CurrentSpeed == 0f)
+            if (evt.UpdateEffects && evt.Player.GameObject.CurrentSpeed == 0f)
             {
-                questionTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                questionTimer -= evt.ElapsedSeconds;
 
                 if (questionTimer <= 0f)
                 {
                     questionTimer = 0.4f;
-                    Effects.QuestionMarkEffect.Display(player);
+                    Effects.QuestionMarkEffect.Display(evt.Player.GameObject);
                 }
             }
         }

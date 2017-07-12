@@ -123,7 +123,7 @@ namespace RogueAPI.Game
         }
 
 
-        public static event Action<ObjContainer, GameTime> PlayerEffectsUpdating;
+        //public static event Action<ObjContainer, GameTime> PlayerEffectsUpdating;
 
         public static event PipeEventHandler<Screen, SkinShaderArgs> RetrievingSkinColor;
 
@@ -139,11 +139,11 @@ namespace RogueAPI.Game
             return args;
         }
 
-        public static void UpdatePlayerEffects(ObjContainer player, GameTime gameTime)
-        {
-            if (PlayerEffectsUpdating != null)
-                PlayerEffectsUpdating(player, gameTime);
-        }
+        //public static void UpdatePlayerEffects(ObjContainer player, GameTime gameTime)
+        //{
+        //    if (PlayerEffectsUpdating != null)
+        //        PlayerEffectsUpdating(player, gameTime);
+        //}
 
         public static void UpdatePlayerStyle(ObjContainer player, string animationType)
         {
